@@ -1,29 +1,9 @@
+
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import lang._
 
 package object graph {
-
-  def dijk(g: Array[ListBuffer[(Int, Long)]], start: Int): Array[Long] = {
-    val d = Array.fill[Long](g.length)(Long.MaxValue)
-    type Visit = (Int, Long)
-    val queue = mutable.PriorityQueue.empty[Visit](Ordering.by[Visit, Long](_._2).reverse)
-    d(start) = 0
-    queue.enqueue((start, 0))
-
-    while(queue.nonEmpty) {
-      val (v, c0) = queue.dequeue()
-      if (d(v) == c0) {
-        g(v) foreach { case (u, c1) =>
-          if (d(u) > c0 + c1) {
-            d(u) = c0 + c1
-            queue.enqueue((u, c0 + c1))
-          }
-        }
-      }
-    }
-
-    d
-  }
 
   def findPath(s: Int, t: Int, N: Int, e: Array[Iterable[Int]]): Seq[Int] = {
     val INF = N + 10
@@ -88,5 +68,52 @@ package object graph {
         }
       }
     }
+  }
+
+  type WUGraph = Array[Array[(Int, Int)]]
+  /**
+    * uwiのぱくり
+    */
+  def packWUGraph(n: Int, from: Array[Int], to: Array[Int], w: Array[Int]): WUGraph = {
+    val g = new Array[Array[(Int, Int)]](n)
+    val p = new Array[Int](n)
+    val m = from.length
+    rep(m)(i => p(from(i)) += 1)
+    rep(m)(i => p(to(i)) += 1)
+    rep(n)(i => g(i) = new Array(p(i)))
+    rep(m) { i =>
+      p(from(i)) -= 1
+      g(from(i))(p(from(i))) = (to(i), w(i))
+      p(to(i)) -= 1
+      g(to(i))(p(to(i))) = (from(i), w(i))
+    }
+    g
+  }
+
+  def dijk(g: WUGraph, start: Int): Array[Long] = {
+    val d = Array.fill[Long](g.length)(Long.MaxValue / 2)
+    case class Visit(node: Int, cost: Long) extends Comparable[Visit] {
+      override def compareTo(o: Visit): Int = java.lang.Long.compare(cost, o.cost)
+    }
+    val queue = new java.util.PriorityQueue[Visit]()
+    d(start) = 0
+    queue.add(Visit(start, 0))
+
+    while(!queue.isEmpty) {
+      val v = queue.poll()
+      if (d(v.node) == v.cost) {
+        g(v.node).rep { e =>
+          val u = e._1
+          val c = e._2
+          val next = v.cost + c
+          if (d(u) > next) {
+            d(u) = next
+            queue.add(Visit(u, next))
+          }
+        }
+      }
+    }
+
+    d
   }
 }

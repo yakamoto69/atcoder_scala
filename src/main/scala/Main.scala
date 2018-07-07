@@ -1,5 +1,5 @@
 import java.io.{BufferedReader, InputStream, InputStreamReader, PrintWriter}
-import java.util.StringTokenizer
+import java.util.{Comparator, StringTokenizer}
 
 import scala.collection.mutable
 import scala.util.Sorting
@@ -14,55 +14,23 @@ object Main {
     val sc = new InputReader(System.in)
     val n, m = sc.nextInt()
     val s, t = sc.nextInt() - 1
-    type Node = Int
-    type Edge = (Node ,Long)
-    val t1, t2 = map(n)(_ => ListBuffer.empty[Edge])
-    rep(m) { _ =>
-      val u, v = sc.nextInt() - 1
-      val a, b = sc.nextLong()
-      t1(u) += ((v, a))
-      t1(v) += ((u, a))
-      t2(u) += ((v, b))
-      t2(v) += ((u, b))
+    val u, v, a, b = Array.ofDim[Int](m)
+    rep(m) { i =>
+      u(i) = sc.nextInt() - 1
+      v(i) = sc.nextInt() - 1
+      a(i) = sc.nextInt()
+      b(i) = sc.nextInt()
     }
+    val g1 = packWUGraph(n, u, v, a)
+    val g2 = packWUGraph(n, u, v, b)
 
-    def dijkstra(tree: Array[ListBuffer[Edge]], start: Int): Array[Long] = {
-      val d = Array.fill[Long](n)(Long.MaxValue)
-      type Visit = (Node, Long)
-      val queue = mutable.PriorityQueue.empty[Visit](Ordering.by[Visit, Long](_._2).reverse)
-      d(start) = 0
-      queue.enqueue((start, 0))
+    val d1 = dijk(g1, s)
+    val d2 = dijk(g2, t)
 
-      while(queue.nonEmpty) {
-        val (v, c0) = queue.dequeue()
-        if (d(v) == c0) {
-          tree(v) foreach { case (u, c1) =>
-            if (d(u) > c0 + c1) {
-              d(u) = c0 + c1
-              queue.enqueue((u, c0 + c1))
-            }
-          }
-        }
-      }
-
-      d
-    }
-
-    val d1 = dijkstra(t1, s)
-    val d2 = dijkstra(t2, t)
-
-    val d = map(n){ i =>
-      val j = n - 1 - i
-      d1(j) + d2(j)
-    }
-    rep(n - 1) { i =>
-      d(i + 1) = min(d(i + 1), d(i))
-    }
-    rep(n) { i =>
-      val j = n - 1 - i
-      val ans = 1000000000000000L - d(j)
-      out.println(ans)
-    }
+    val money = 1e15.toLong
+    val ans = map(n)(i => money - d1(i) - d2(i))
+    rep_r(n - 1)(i => ans(i) = max(ans(i), ans(i + 1)))
+    rep(n)(i => out.println(ans(i)))
   }
 
 
@@ -88,6 +56,7 @@ object Main {
   }
 
   private def rep(n: Int)(f: Int => Unit): Unit = (0 until n) foreach f
+  private def rep_r(n: Int)(f: Int => Unit): Unit = (0 until n).reverse foreach f
 
   private def map[@specialized A: ClassTag](n: Int)(f: Int => A): Array[A] = {
     val res = Array.ofDim[A](n)
@@ -144,5 +113,52 @@ object Main {
     def sumBy[B](f: A => B)(implicit num: Numeric[B]): B = {
       as.foldLeft(num.zero)((acc, a) => num.plus(acc, f(a)))
     }
+  }
+
+  type WUGraph = Array[Array[(Int, Int)]]
+  /**
+    * uwiのぱくり
+    */
+  def packWUGraph(n: Int, from: Array[Int], to: Array[Int], w: Array[Int]): WUGraph = {
+    val g = new Array[Array[(Int, Int)]](n)
+    val p = new Array[Int](n)
+    val m = from.length
+    rep(m)(i => p(from(i)) += 1)
+    rep(m)(i => p(to(i)) += 1)
+    rep(n)(i => g(i) = new Array(p(i)))
+    rep(m) { i =>
+      p(from(i)) -= 1
+      g(from(i))(p(from(i))) = (to(i), w(i))
+      p(to(i)) -= 1
+      g(to(i))(p(to(i))) = (from(i), w(i))
+    }
+    g
+  }
+
+  def dijk(g: WUGraph, start: Int): Array[Long] = {
+    val d = Array.fill[Long](g.length)(Long.MaxValue / 2)
+    case class Visit(node: Int, cost: Long) extends Comparable[Visit] {
+      override def compareTo(o: Visit): Int = java.lang.Long.compare(cost, o.cost)
+    }
+    val queue = new java.util.PriorityQueue[Visit]()
+    d(start) = 0
+    queue.add(Visit(start, 0))
+
+    while(!queue.isEmpty) {
+      val v = queue.poll()
+      if (d(v.node) == v.cost) {
+        g(v.node).rep { e =>
+          val u = e._1
+          val c = e._2
+          val next = v.cost + c
+          if (d(u) > next) {
+            d(u) = next
+            queue.add(Visit(u, next))
+          }
+        }
+      }
+    }
+
+    d
   }
 }
