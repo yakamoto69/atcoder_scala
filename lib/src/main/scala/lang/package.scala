@@ -4,33 +4,36 @@ import scala.reflect.ClassTag
 
 package object lang {
 
-  def rep(n: Int)(f: Int => Unit): Unit = (0 until n) foreach f
-  def rep_r(n: Int)(f: Int => Unit): Unit = (0 until n).reverse foreach f
+  def rep(n: Int)(f: Int => Unit): Unit = {
+    var i = 0
+    while(i < n) { f(i); i += 1 }
+  }
+  def rep_r(n: Int)(f: Int => Unit): Unit = {
+    var i = n - 1
+    while(i >= 0) { f(i); i -= 1 }
+  }
 
   def map[@specialized A: ClassTag](n: Int)(f: Int => A): Array[A] = {
     val res = Array.ofDim[A](n)
-    (0 until n) foreach (i => res(i) = f(i))
+    rep(n)(i => res(i) = f(i))
     res
   }
 
   implicit class ArrayOpts[A](val as: Array[A]) extends AnyVal {
+    // todo Orderingだとboxing発生するので自作Orderを用意したい
     def maxByOpt[B: Ordering](f: A => B): Option[A] = {
       if (as.nonEmpty) Some(as.maxBy(f)) else None
     }
 
     def grpBy[K](f: A => K): mutable.Map[K, ArrayBuffer[A]] = {
       val map = mutable.Map.empty[K, ArrayBuffer[A]]
-      rep(a => map.getOrElseUpdate(f(a), ArrayBuffer()) += a)
+      rep(as.length)(i => map.getOrElseUpdate(f(as(i)), ArrayBuffer()) += as(i))
       map
-    }
-
-    def rep(f: A => Unit): Unit = {
-      as.indices foreach (i => f(as(i)))
     }
 
     def sumBy[B](f: A => B)(implicit num: Numeric[B]): B = {
       var sum = num.zero
-      rep(a => sum = num.plus(sum, f(a)))
+      rep(as.length)(i => sum = num.plus(sum, f(as(i))))
       sum
     }
 

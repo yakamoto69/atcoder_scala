@@ -70,12 +70,13 @@ package object graph {
     }
   }
 
-  type WUGraph = Array[Array[(Int, Int)]]
+  case class Edge(to: Int, weight: Int)
+  type WUGraph = Array[Array[Edge]]
   /**
     * uwiのぱくり
     */
   def packWUGraph(n: Int, from: Array[Int], to: Array[Int], w: Array[Int]): WUGraph = {
-    val g = new Array[Array[(Int, Int)]](n)
+    val g = new Array[Array[Edge]](n)
     val p = new Array[Int](n)
     val m = from.length
     rep(m)(i => p(from(i)) += 1)
@@ -83,9 +84,9 @@ package object graph {
     rep(n)(i => g(i) = new Array(p(i)))
     rep(m) { i =>
       p(from(i)) -= 1
-      g(from(i))(p(from(i))) = (to(i), w(i))
+      g(from(i))(p(from(i))) = Edge(to(i), w(i))
       p(to(i)) -= 1
-      g(to(i))(p(to(i))) = (from(i), w(i))
+      g(to(i))(p(to(i))) = Edge(from(i), w(i))
     }
     g
   }
@@ -102,13 +103,12 @@ package object graph {
     while(!queue.isEmpty) {
       val v = queue.poll()
       if (d(v.node) == v.cost) {
-        g(v.node).rep { e =>
-          val u = e._1
-          val c = e._2
-          val next = v.cost + c
-          if (d(u) > next) {
-            d(u) = next
-            queue.add(Visit(u, next))
+        rep(g(v.node).length) { i =>
+          val e = g(v.node)(i)
+          val next = v.cost + e.weight
+          if (d(e.to) > next) {
+            d(e.to) = next
+            queue.add(Visit(e.to, next))
           }
         }
       }
