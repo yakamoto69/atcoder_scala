@@ -25,7 +25,7 @@ object Main {
 
   class InputReader(val stream: InputStream) {
     private val reader = new BufferedReader(new InputStreamReader(stream), 32768)
-    private var tokenizer: StringTokenizer = null
+    private var tokenizer: StringTokenizer = _
 
     def next(): String = {
       while (tokenizer == null || !tokenizer.hasMoreTokens)

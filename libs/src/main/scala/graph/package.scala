@@ -1,9 +1,62 @@
 
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import lang._
 
 package object graph {
+
+  def bipartiteMatch(g: Array[ArrayBuffer[Int]]): Int = {
+    val m = Array.fill[Int](g.length)(-1)
+    val used = Array.ofDim[Boolean](g.length)
+
+    def dfs(s: Int): Boolean = {
+      case class Match(a: Int, b: Int)
+      class Stacked(val v: Int, val matches: List[Match]) {
+        var i = 0
+      }
+      val stack = mutable.Stack[Stacked]()
+      used(s) = true
+      stack.push(new Stacked(s, Nil))
+
+      def realign(matches: List[Match]): Unit = {
+        matches foreach { x =>
+          m(x.a) = x.b
+          m(x.b) = x.a
+        }
+      }
+
+      while (stack.nonEmpty) {
+        val stacked = stack.head
+        val v = stacked.v
+        val matches = stacked.matches
+        val i = stacked.i
+        stacked.i += 1
+        if (i >= g(v).length) stack.pop()
+        else {
+          val u = g(v)(i)
+          val w = m(u)
+          if (w < 0) {
+            realign(Match(v, u) :: matches)
+            return true
+          } else if (!used(w)) {
+            used(w) = true
+            stack.push(new Stacked(w, Match(v, u) :: matches))
+          }
+        }
+      }
+
+      false
+    }
+
+    var res = 0
+    rep(g.length) { v =>
+      if (m(v) < 0) {
+        java.util.Arrays.fill(used, false)
+        if (dfs(v)) res += 1
+      }
+    }
+    res
+  }
 
   def findPath(s: Int, t: Int, N: Int, e: Array[Iterable[Int]]): Seq[Int] = {
     val INF = N + 10
@@ -33,41 +86,6 @@ package object graph {
     }
 
     traceback(t, s, Nil)
-  }
-
-
-  class UnionFind(n: Int) {
-    private val par = Array.ofDim[Int](n)
-    par.indices foreach (i => par(i) = i)
-    private val rank = Array.ofDim[Int](n)
-
-    def find(x: Int): Int = {
-      val stack = ListBuffer[Int]()
-      def step(x: Int): Int = {
-        if (par(x) == x) x
-        else {
-          stack += x
-          step(par(x))
-        }
-      }
-
-      val res = step(x)
-      stack foreach (i => par(i) = res)
-      res
-    }
-
-    def unite(x: Int, y: Int): Unit = {
-      val x1 = find(x)
-      val y1 = find(y)
-      if (x1 != y1) {
-        if (rank(x1) < rank(y)) {
-          par(x1) = y1
-        } else {
-          par(y1) = x1
-          if (rank(x1) == rank(y1)) rank(x1) += 1
-        }
-      }
-    }
   }
 
   case class Edge(to: Int, weight: Int)

@@ -1,4 +1,4 @@
-
+import lang._
 
 package object integer {
 
@@ -37,16 +37,22 @@ package object integer {
     * 7 = (2 * 3) + 1 = (2 * (2 + 1)) + 1
     *
     */
-  def pow_mod(x: Int, n: Int, m: Int): Int = {
-    def step(x0: Long, n0: Int): Long = {
-      n0 match {
-        case 0 => 1
-        case _ =>
-          val r = step(x0 * x0 % m, n0 / 2)
-          if (n0 % 2 == 1) r * x0 % m else r
+  def powMod(x: Int, n: Int, m: Int): Int = {
+    def step(x: Long, n: Int, stack: Long): Long = {
+      n match {
+        case 0 => stack
+        case _ => step(x * x % m, n / 2, if (n % 2 == 1) stack * x % m else stack)
       }
     }
-    step(x.toLong, n).toInt
+    step(x, n, 1).toInt
+  }
+
+  def permMod(n: Int, k: Int, m: Int): Int = {
+    def step(n: Long, k: Long, v: Long): Long = {
+      if (k == 0) v
+      else step(n - 1, k - 1, n * v % m)
+    }
+    step(n, k, 1).toInt
   }
 
   def pow(x: Int, n: Int): Int = {
@@ -161,6 +167,31 @@ package object integer {
       }
     }
     step(-1, a.length)
+  }
+
+  // nCk % MOD を求める。下準備で階乗Fと≡MODでの階乗の逆元Iを作る
+  {
+    val N = 10000
+    val MOD = 1e9.toInt + 7
+
+    def comb(n: Int, k: Int): Long = {
+      val F = Array.ofDim[Long](N + 1)
+      F(0) = 1
+      rep(N) { i =>
+        F(i + 1) = F(i) * (i + 1) % MOD
+      }
+      val I = Array.ofDim[Long](F.length)
+      I(N) = powMod(F(N).toInt, MOD - 2, MOD)
+
+      // x! = x(x-1)!
+      // x!I(x!) ≡ (x-1)!I((x-1)!)
+      // I((x-1)!) ≡ I(x!) * x   MODがでかいので(x-1)!はMODと素
+      rep_r(N) { i =>
+        I(i) = I(i + 1) * F(i + 1) % MOD
+      }
+
+      F(n) * I(n - k) % MOD * I(k) % MOD
+    }
   }
 
 }
