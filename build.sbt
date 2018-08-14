@@ -8,7 +8,7 @@ lazy val root = (project in file("."))
     name := "atcoder"
   )
 
-lazy val util = (project in file("lib"))
+lazy val util = (project in file("libs"))
   .settings(
     commonSettings
   )

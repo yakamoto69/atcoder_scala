@@ -37,13 +37,14 @@ object Main {
     def nextLong(): Long = next().toLong
     def nextChar(): Char = next().charAt(0)
   }
-  def rep(n: Int)(f: Int => Unit): Unit = {
-    var i = 0
-    while(i < n) { f(i); i += 1 }
+  def rep(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
+    var i = offset
+    val N = n + offset
+    while(i < N) { f(i); i += 1 }
   }
-  def rep_r(n: Int)(f: Int => Unit): Unit = {
-    var i = n - 1
-    while(i >= 0) { f(i); i -= 1 }
+  def rep_r(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
+    var i = n - 1 + offset
+    while(i >= offset) { f(i); i -= 1 }
   }
 
   def map[@specialized A: ClassTag](n: Int)(f: Int => A): Array[A] = {

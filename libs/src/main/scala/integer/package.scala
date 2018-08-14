@@ -174,23 +174,34 @@ package object integer {
     val N = 10000
     val MOD = 1e9.toInt + 7
 
+    def powMod(x: Int, n: Int, m: Int): Int = {
+      def step(x: Long, n: Int, stack: Long): Long = {
+        n match {
+          case 0 => stack
+          case _ => step(x * x % m, n / 2, if (n % 2 == 1) stack * x % m else stack)
+        }
+      }
+      step(x, n, 1).toInt
+    }
+
+    val F = Array.ofDim[Long](N + 1)
+    F(0) = 1
+    rep(N) { i =>
+      F(i + 1) = F(i) * (i + 1) % MOD
+    }
+    val I = Array.ofDim[Long](F.length)
+    I(N) = powMod(F(N).toInt, MOD - 2, MOD)
+
+    // x! = x(x-1)!
+    // x!I(x!) ≡ (x-1)!I((x-1)!)
+    // I((x-1)!) ≡ I(x!) * x   MODがでかいので(x-1)!はMODと素
+    rep_r(N) { i =>
+      I(i) = I(i + 1) * (i + 1) % MOD
+    }
+
     def comb(n: Int, k: Int): Long = {
-      val F = Array.ofDim[Long](N + 1)
-      F(0) = 1
-      rep(N) { i =>
-        F(i + 1) = F(i) * (i + 1) % MOD
-      }
-      val I = Array.ofDim[Long](F.length)
-      I(N) = powMod(F(N).toInt, MOD - 2, MOD)
-
-      // x! = x(x-1)!
-      // x!I(x!) ≡ (x-1)!I((x-1)!)
-      // I((x-1)!) ≡ I(x!) * x   MODがでかいので(x-1)!はMODと素
-      rep_r(N) { i =>
-        I(i) = I(i + 1) * F(i + 1) % MOD
-      }
-
-      F(n) * I(n - k) % MOD * I(k) % MOD
+      if (n < k) 0
+      else F(n) * I(n - k) % MOD * I(k) % MOD
     }
   }
 
