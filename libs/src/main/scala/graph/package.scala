@@ -134,4 +134,20 @@ package object graph {
 
     d
   }
+
+  def packTree(n: Int, from: Array[Int], to: Array[Int]): Array[Array[Int]] = {
+    val t = new Array[Array[Int]](n)
+    val p = new Array[Int](n)
+    val m = from.length
+    rep(m)(i => p(from(i)) += 1)
+    rep(m)(i => p(to(i)) += 1)
+    rep(n)(i => t(i) = new Array(p(i)))
+    rep(m) { i =>
+      p(from(i)) -= 1
+      t(from(i))(p(from(i))) = to(i)
+      p(to(i)) -= 1
+      t(to(i))(p(to(i))) = from(i)
+    }
+    t
+  }
 }
