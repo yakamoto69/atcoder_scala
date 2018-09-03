@@ -12,9 +12,8 @@ object Main {
   val out = new PrintWriter(System.out)
 
   def solve(): Unit = {
-    val sc = new InputReader(System.in)
-    val N = sc.nextInt()
-
+    val N = ni()
+    out.println(N)
   }
 
   def main(args: Array[String]): Unit = {
@@ -37,6 +36,14 @@ object Main {
     def nextLong(): Long = next().toLong
     def nextChar(): Char = next().charAt(0)
   }
+  val sc = new InputReader(System.in)
+  def ni(): Int = sc.nextInt()
+  def nl(): Long = sc.nextLong()
+  def nc(): Char = sc.nextChar()
+  def ns(): String = sc.next()
+  def ns(n: Int): Array[Char] = ns().toCharArray
+  def na(n: Int): Array[Int] = map(n)(_ => ni())
+  def nm(n: Int, m: Int): Array[Array[Char]] = map(n) (_ => ns(m))
   def rep(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
     var i = offset
     val N = n + offset

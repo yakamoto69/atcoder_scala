@@ -150,4 +150,32 @@ package object graph {
     }
     t
   }
+
+  /**
+    * @return (depth, parent)
+    */
+  def traceBfs(g: Array[Array[Int]]): (Array[Int], Array[Int]) = {
+    val n = g.length
+    val INF = 1e9.toInt + 10
+    val q, p = Array.ofDim[Int](n)
+    p(0) = -1
+    val d = Array.fill[Int](n)(INF)
+    d(0) = 0
+    var cur = 0
+    var last = 1
+    while (cur < last) {
+      val v = q(cur)
+      rep(g(v).length) { i =>
+        val u = g(v)(i)
+        if (d(u) == INF) {
+          d(u) = d(v) + 1
+          p(u) = v
+          q(last) = u
+          last += 1
+        }
+      }
+      cur += 1
+    }
+    (d, p)
+  }
 }
