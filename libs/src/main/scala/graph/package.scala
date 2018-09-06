@@ -135,7 +135,7 @@ package object graph {
     d
   }
 
-  def packTree(n: Int, from: Array[Int], to: Array[Int]): Array[Array[Int]] = {
+  def packUGraph(n: Int, from: Array[Int], to: Array[Int]): Array[Array[Int]] = {
     val t = new Array[Array[Int]](n)
     val p = new Array[Int](n)
     val m = from.length
