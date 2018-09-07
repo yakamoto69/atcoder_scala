@@ -1,4 +1,12 @@
 object Main {
+  def main(args: Array[String]): Unit = {
+    val s = new Main()
+    s.solve()
+    s.out.flush()
+  }
+}
+
+class Main {
   import java.io._
   import java.util.StringTokenizer
 
@@ -14,11 +22,6 @@ object Main {
   def solve(): Unit = {
     val N = ni()
     out.println(N)
-  }
-
-  def main(args: Array[String]): Unit = {
-    solve()
-    out.flush()
   }
 
 
