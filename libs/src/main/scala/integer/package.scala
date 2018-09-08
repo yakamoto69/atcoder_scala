@@ -3,9 +3,16 @@ import lang._
 package object integer {
 
   def gcd(a: Int, b: Int): Int = {
-    val r = a % b
-    if (r == 0) b
-    else gcd(b, r)
+    if (b == 0) a
+    else gcd(b, a % b)
+  }
+
+  def gcd(as: Array[Int]): Int = {
+    var res = as(0)
+    rep(as.length - 1, 1) { i =>
+      res = gcd(res, as(i))
+    }
+    res
   }
 
   private case class Bezout(r: Int, s: Int, t: Int)
@@ -53,15 +60,6 @@ package object integer {
       else step(n - 1, k - 1, n * v % m)
     }
     step(n, k, 1).toInt
-  }
-
-  def pow(x: Int, n: Int): Int = {
-    n match {
-      case 0 => 1
-      case _ =>
-        val r = pow(x * x, n / 2)
-        if (n % 2 == 1) r * x else r
-    }
   }
 
   def factorize(n: Int): Array[Int] = {
@@ -171,7 +169,7 @@ package object integer {
 
   // nCk % MOD を求める。下準備で階乗Fと≡MODでの階乗の逆元Iを作る
   {
-    val N = 10000
+    val NN = 10000
     val MOD = 1e9.toInt + 7
 
     def powMod(x: Int, n: Int, m: Int): Int = {
@@ -184,18 +182,18 @@ package object integer {
       step(x, n, 1).toInt
     }
 
-    val F = Array.ofDim[Long](N + 1)
+    val F = Array.ofDim[Long](NN + 1)
     F(0) = 1
-    rep(N) { i =>
+    rep(NN) { i =>
       F(i + 1) = F(i) * (i + 1) % MOD
     }
     val I = Array.ofDim[Long](F.length)
-    I(N) = powMod(F(N).toInt, MOD - 2, MOD)
+    I(NN) = powMod(F(NN).toInt, MOD - 2, MOD)
 
     // x! = x(x-1)!
     // x!I(x!) ≡ (x-1)!I((x-1)!)
     // I((x-1)!) ≡ I(x!) * x   MODがでかいので(x-1)!はMODと素
-    rep_r(N) { i =>
+    rep_r(NN) { i =>
       I(i) = I(i + 1) * (i + 1) % MOD
     }
 
