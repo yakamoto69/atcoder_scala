@@ -1,0 +1,22 @@
+{
+  "name": "Copy Example Input/Output to Clipboard",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "same as name",
+
+  "content_scripts": [
+    {
+      "matches": ["https://beta.atcoder.jp/*"],
+      "js": [
+        "jquery-3.3.1.min.js",
+        "atcoder.js"
+      ]
+    }, {
+      "matches": ["https://codeforces.com/*"],
+      "js": [
+        "jquery-3.3.1.min.js",
+        "codeforces.js"
+      ]
+    }
+  ]
+}
