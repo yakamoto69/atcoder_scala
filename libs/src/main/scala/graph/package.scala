@@ -58,36 +58,6 @@ package object graph {
     res
   }
 
-  def findPath(s: Int, t: Int, N: Int, e: Array[Iterable[Int]]): Seq[Int] = {
-    val INF = N + 10
-    val d = Array.fill(N + 1)(INF)
-    val q = mutable.PriorityQueue.empty[(Int, Int)](Ordering.by((_: (Int, Int))._1)) // (cost, 頂点)
-    val prev = Array.fill(N + 1)(-1)
-
-    d(s) = 0
-    q.enqueue((0, s))
-
-    while(q.nonEmpty) {
-      val (cost, v) = q.dequeue()
-      if (cost <= d(v)) {
-        e(v).foreach { u =>
-          if (d(u) > d(v) + 1) {
-            d(u) = d(v) + 1
-            prev(u) = v
-            q.enqueue((d(u), u))
-          }
-        }
-      }
-    }
-
-    def traceback(v: Int, end: Int, path: List[Int]): List[Int] = v match {
-      case `end` => v :: path
-      case _ => traceback(prev(v), end, v :: path)
-    }
-
-    traceback(t, s, Nil)
-  }
-
   case class Edge(to: Int, weight: Int)
   type WUGraph = Array[Array[Edge]]
   /**
@@ -149,6 +119,74 @@ package object graph {
       t(to(i))(p(to(i))) = from(i)
     }
     t
+  }
+
+  def packDGraph(n: Int, from: Array[Int], to: Array[Int]): Array[Array[Int]] = {
+    val t = new Array[Array[Int]](n)
+    val p = new Array[Int](n)
+    val m = from.length
+    rep(m)(i => p(from(i)) += 1)
+    rep(n)(i => t(i) = new Array(p(i)))
+    rep(m) { i =>
+      p(from(i)) -= 1
+      t(from(i))(p(from(i))) = to(i)
+    }
+    t
+  }
+
+  def findCycle(n: Int, g: Array[Array[Int]]): Option[Array[Int]] = {
+    val flag = Array.ofDim[Int](n)
+    val ix = Array.ofDim[Int](n)
+    val q = Array.ofDim[Int](n)
+
+    def dfs(i: Int): Option[Array[Int]] = {
+      def step(last: Int): Option[Array[Int]] =
+        if (last < 0) None
+        else {
+          val v = q(last)
+
+          flag(v) match {
+            case 2 => step(last - 1)
+
+            case 0 | 1 =>
+              flag(v) = 1
+              if (g(v).length == ix(v)) { // vの探索終わり
+                flag(v) = 2
+                step(last - 1)
+              } else {  // dfs(u)
+                val u = g(v)(ix(v))
+                ix(v) += 1
+                val next = last + 1
+                flag(u) match {
+                  case 0 =>
+                    q(next) = u
+                    step(next)
+
+                  case 1 => // 閉路見つかった
+                    val found = q.indexOf(u)
+                    Some(java.util.Arrays.copyOfRange(q, found, next))
+
+                  case _ => step(last)
+                }
+              }
+          }
+        }
+
+      q(0) = i
+      step(0)
+    }
+
+    def step(i: Int): Option[Array[Int]] =
+      if (i == n) None
+      else {
+        if (flag(i) != 0) step(i + 1)
+        else dfs(i) match {
+          case None => step(i + 1)
+          case Some(cycle) => Some(cycle)
+        }
+      }
+
+    step(0)
   }
 
   /**

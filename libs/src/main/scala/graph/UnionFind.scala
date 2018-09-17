@@ -1,8 +1,9 @@
 package graph
 
 import scala.collection.mutable.ListBuffer
+import lang._
 
-class UnionFind(n: Int) {
+class UnionFind(val n: Int) {
   private val par = Array.ofDim[Int](n)
   par.indices foreach (i => par(i) = i)
   private val rank = Array.ofDim[Int](n)
@@ -33,5 +34,42 @@ class UnionFind(n: Int) {
         if (rank(x1) == rank(y1)) rank(x1) += 1
       }
     }
+  }
+}
+
+object UnionFind {
+
+  def countDisjointSets(n: Int, V: Array[Int], U: Array[Int]): Int = {
+    val uf = new UnionFind(n)
+    var cnt = n
+    rep(V.length) { i =>
+      if (uf.find(U(i)) != uf.find(V(i))) {
+        uf.unite(U(i), V(i))
+        cnt -= 1
+      }
+    }
+    cnt
+  }
+
+  def countDisjointSets(uf: UnionFind): Int = {
+    var cnt = 0
+    rep(uf.n) { i =>
+      if (uf.find(i) == i) cnt += 1
+    }
+    cnt
+  }
+
+  def disjointSets(uf: UnionFind): Array[Array[Int]] = {
+    val N = uf.n
+    val cnt = Array.ofDim[Int](N)
+    val disjoints = Array.ofDim[Array[Int]](N)
+    rep(N) { i => cnt(uf.find(i)) += 1 }
+    rep(N) { i => disjoints(i) = Array.ofDim(cnt(uf.find(i))) }
+    rep(N) { i =>
+      val id = uf.find(i)
+      disjoints(id)(cnt(id) - 1) = i
+      cnt(id) -= 1
+    }
+    disjoints
   }
 }

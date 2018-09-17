@@ -21,7 +21,6 @@ class Main {
 
   def solve(): Unit = {
     val N = ni()
-    out.println(N)
   }
 
 
@@ -46,6 +45,7 @@ class Main {
   def ns(): String = sc.next()
   def ns(n: Int): Array[Char] = ns().toCharArray
   def na(n: Int): Array[Int] = map(n)(_ => ni())
+  def nal(n: Int): Array[Long] = map(n)(_ => nl())
   def nm(n: Int, m: Int): Array[Array[Char]] = map(n) (_ => ns(m))
   def rep(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
     var i = offset
@@ -61,5 +61,11 @@ class Main {
     val res = Array.ofDim[A](n)
     rep(n)(i => res(i) = f(i))
     res
+  }
+
+  def sumL(as: Array[Int]): Long = {
+    var s = 0L
+    rep(as.length)(i => s += as(i))
+    s
   }
 }
