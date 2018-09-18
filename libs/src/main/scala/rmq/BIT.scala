@@ -44,7 +44,7 @@ object BIT {
     * (, 3] => 0  (3, 5] => 1 (5, 6] => 2 (6, ) => 3
     *
     */
-  class Zipper(as: Array[A]) {
+  class ZipperLB(as: Array[A]) {
     def apply(x: A): Int = {
       lowerBound(as, x)
     }
@@ -56,7 +56,7 @@ object BIT {
     */
   class ZippedCounter(as: Array[A]) {
     val n = as.length
-    val zip = new Zipper(as)
+    val zip = new ZipperLB(as)
     val bit = new BIT(n + 1) // zipされたレンジはn + 1個になる
     var cnt = 0
 
