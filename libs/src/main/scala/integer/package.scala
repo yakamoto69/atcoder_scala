@@ -25,6 +25,10 @@ package object integer {
   pow10(0) = 1
   rep(18)(i => pow10(i + 1) = pow10(i) * 10)
 
+  val pow2 = Array.ofDim[Long](32)
+  pow2(0) = 1
+  rep(31)(i => pow2(i + 1) = pow2(i) * 2)
+
   /**
     * @return (log10の整数値, 最大桁の値)
     */
@@ -36,6 +40,19 @@ package object integer {
       i += 1
     }
     (i, a.toInt)
+  }
+
+  /**
+    * log2して小数点切り捨てたもの
+    */
+  def log2(x: Int): Int = {
+    var a = Integer.highestOneBit(x)
+    var i = 0
+    while(a > 1) {
+      i += 1
+      a >>>= 1
+    }
+    i
   }
 
   /**
@@ -51,6 +68,40 @@ package object integer {
       }
     }
     step(x, n, 1).toInt
+  }
+
+  // Euler's Sieve
+  {
+    val NN = (1e7 + 5e6).toInt
+    val prime = Array.ofDim[Int](1e6.toInt)
+    val factor = Array.ofDim[Int](NN + 1)
+    var pp = 0
+
+    2 to NN foreach { i =>
+      if (factor(i) == 0) {
+        factor(i) = i
+        prime(pp) = i
+        pp += 1
+      }
+
+      def fill(p: Int): Unit = {
+        if (p < pp && prime(p) * i <= NN) {
+          factor(prime(p) * i) = prime(p)
+          if (prime(p) != i)
+            fill(p + 1)
+        }
+      }
+
+      fill(0)
+    }
+
+    def factorize(x: Int)(fn: Int => Unit): Unit = {
+      if (x > 1) {
+        val f = factor(x)
+        fn(f)
+        factorize(x / f)(fn)
+      }
+    }
   }
 
   /**

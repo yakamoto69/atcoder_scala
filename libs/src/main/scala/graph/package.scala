@@ -2,6 +2,7 @@
 import scala.collection.mutable
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import lang._
+import math.min
 
 package object graph {
 
@@ -190,9 +191,9 @@ package object graph {
   }
 
   /**
-    * @return (depth, parent)
+    * @return (depth, parent, queue)
     */
-  def traceBfs(g: Array[Array[Int]]): (Array[Int], Array[Int]) = {
+  def traceBfs(g: Array[Array[Int]]): (Array[Int], Array[Int], Array[Int]) = {
     val n = g.length
     val INF = 1e9.toInt + 10
     val q, p = Array.ofDim[Int](n)
@@ -214,6 +215,55 @@ package object graph {
       }
       cur += 1
     }
-    (d, p)
+    (d, p, q)
+  }
+
+  /**
+    * Lowest Common Ancestor
+    */
+  {
+    val NN = 100000
+    val K = 20
+    val g: Array[Array[Int]] = ???
+
+    val (depth, parent, _) = traceBfs(g)
+    parent(0) = 0
+    val anc = Array.ofDim[Int](K, NN)
+    rep(NN) { i =>
+      anc(0)(i) = parent(i)
+    }
+    rep(anc.length - 1, 1) { k =>
+      rep(NN) { i =>
+        anc(k)(i) = anc(k-1)(anc(k-1)(i))
+      }
+    }
+
+    def getParent(v: Int, d: Int): Int = {
+      def step(v0: Int, k: Int, d0: Int): Int = {
+        if (d0 == 0) v0
+        else if (d0 % 2 == 1) step(anc(k)(v0), k + 1, d0 / 2)
+        else step(v0, k + 1, d0 / 2)
+      }
+
+      step(v, 0, d)
+    }
+
+    def lca(v: Int, u: Int): Int = {
+      def step(v0: Int, u0: Int, k: Int): Int = {
+        if (k == -1) {
+          anc(0)(v0) // １つ前の子を返したかったら(v0, u0)を返す
+        } else if (anc(k)(v0) == anc(k)(u0)) {
+          step(v0, u0, k - 1)
+        } else {
+          step(anc(k)(v0), anc(k)(u0), k - 1)
+        }
+      }
+
+      val d = min(depth(v), depth(u))
+      val v0 = getParent(v, depth(v) - d)
+      val u0 = getParent(u, depth(u) - d)
+      if (v0 == u0) v0 // この時点で同じだったらダブリングで調べる必要がない
+      else step(v0, u0, anc.length - 1)
+    }
   }
 }
