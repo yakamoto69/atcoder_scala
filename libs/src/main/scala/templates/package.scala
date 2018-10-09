@@ -23,4 +23,12 @@ package object templates {
   def findZippedRange2(x: Array[A], l: A, r: A): (Int, Int) = {
     (lowerBound(x, l + 1), upperBound(x, r) - 1)
   }
+
+  /**
+    * ピタゴラスの定理を使って斜辺とあと一辺の長さがわかっているときに、もう一辺の長さを計算する
+    * Math.sqrt(c^2 - a^2) だと精度が落ちてしまうのでこうしないといけない
+    */
+  def calcOtherSide(c: Double, a: Double): Double = {
+    Math.sqrt(c + a) * Math.sqrt(c - a)
+  }
 }

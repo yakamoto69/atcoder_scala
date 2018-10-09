@@ -1,32 +1,55 @@
 import lang.rep
 
 package object collection {
+
+  import scala.reflect.ClassTag
+
+  /**
+    * 正の値のみのときだけ
+    */
   def radixSort(f: Array[Int]): Array[Int] = radixSort(f, f.length)
-  def radixSort(f1: Array[Int], n: Int): Array[Int] = {
-    var f = f1
-    var to = Array.ofDim[Int](n)
-
+  def radixSort(as: Array[Int], n: Int): Array[Int] = {
+    val n = as.length
+    val xs = Array(as, new Array[Int](n))
     val b = Array.ofDim[Int](65537)
-    rep(n){ i => b(1 + (f(i) & 0xffff)) += 1 }
-    rep(65536, 1){ i => b(i) += b(i - 1) }
-    rep(n){ i =>
-      val j = f(i) & 0xffff
-      to(b(j)) = f(i)
-      b(j) += 1
-    }
-    val temp = f
-    f = to
-    to = temp
 
-    java.util.Arrays.fill(b, 0)
-    rep(n){ i => b(1 + (f(i) >>> 16)) += 1 }
-    rep(65536, 1){ i => b(i) += b(i - 1) }
-    rep(n){ i =>
-      val j = f(i) >>> 16
-      to(b(j)) = f(i)
-      b(j) += 1
+    def step(k: Int, x: Int): Unit = {
+      rep(n){ i => b(1 + (xs(x)(i) >>> k & 0xffff)) += 1 }
+      rep(65536, 1){ i => b(i) += b(i - 1) }
+      rep(n){ i =>
+        val j = xs(x)(i) >>> k & 0xffff
+        xs(x ^ 1)(b(j)) = xs(x)(i)
+        b(j) += 1
+      }
     }
-    to
+
+    step(0, 0)
+    java.util.Arrays.fill(b, 0)
+    step(16, 1)
+
+    as
+  }
+
+  def radixSort[A: ClassTag](as: Array[A])(f: A => Int): Array[A] = {
+    val n = as.length
+    val xs = Array(as, new Array[A](n))
+    val b = Array.ofDim[Int](65537)
+
+    def step(k: Int, x: Int): Unit = {
+      rep(n){ i => b(1 + (f(xs(x)(i)) >>> k & 0xffff)) += 1 }
+      rep(65536, 1){ i => b(i) += b(i - 1) }
+      rep(n){ i =>
+        val j = f(xs(x)(i)) >>> k & 0xffff
+        xs(x ^ 1)(b(j)) = xs(x)(i)
+        b(j) += 1
+      }
+    }
+
+    step(0, 0)
+    java.util.Arrays.fill(b, 0)
+    step(16, 1)
+
+    as
   }
 
   /**
@@ -49,13 +72,10 @@ package object collection {
       }
     }
 
-    step(0, 0)
-    java.util.Arrays.fill(b, 0)
-    step(16, 1)
-    java.util.Arrays.fill(b, 0)
-    step(32, 0)
-    java.util.Arrays.fill(b, 0)
-    step(48, 1)
+    (0 until 4) foreach { i =>
+      if (i > 0) java.util.Arrays.fill(b, 0)
+      step(16 * i, i % 2)
+    }
 
     x(0)
   }

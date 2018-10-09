@@ -10,5 +10,9 @@ lazy val root = (project in file("."))
 
 lazy val util = (project in file("libs"))
   .settings(
-    commonSettings
+    commonSettings,
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "3.0.5" % Test,
+      "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
+    )
   )

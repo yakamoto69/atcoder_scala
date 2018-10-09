@@ -1,5 +1,6 @@
 import lang._
 import scala.collection.mutable
+import math.min
 
 package object integer {
 
@@ -27,7 +28,7 @@ package object integer {
 
   val pow2 = Array.ofDim[Long](32)
   pow2(0) = 1
-  rep(31)(i => pow2(i + 1) = pow2(i) * 2)
+  rep(pow2.length - 1)(i => pow2(i + 1) = pow2(i) * 2)
 
   /**
     * @return (log10の整数値, 最大桁の値)
@@ -166,4 +167,24 @@ package object integer {
     }
   }
 
+  /**
+    * 連続する0の最小の長さを返す
+    * @param K bitを小さい方から何ビット調べるか
+    */
+  def minContinuousZero(bit: Int, K: Int): Int = {
+    def step(k: Int, cnt: Int, ms: Int): Int = {
+      k match {
+        case K => if (cnt > 0) min(cnt, ms) else ms
+        case _ =>
+          if ((bit & 1 << k) == 0) {
+            step(k + 1, if (cnt > 0) cnt + 1 else 1, ms) // 0
+          } else {
+            step(k + 1, -1, if (cnt > 0) min(cnt, ms) else ms) // 1
+          }
+      }
+    }
+
+    val ms = step(0, -1, K + 1)
+    if (ms == K + 1) 0 else ms
+  }
 }

@@ -106,6 +106,9 @@ package object graph {
     d
   }
 
+  /**
+    * @param n ノード数
+    */
   def packUGraph(n: Int, from: Array[Int], to: Array[Int]): Array[Array[Int]] = {
     val t = new Array[Array[Int]](n)
     val p = new Array[Int](n)
@@ -216,6 +219,15 @@ package object graph {
       cur += 1
     }
     (d, p, q)
+  }
+
+  def isBipartite(g: Array[Array[Int]]): Boolean = {
+    val (d, _, _) = traceBfs(g)
+    g.indices forall { v =>
+      g(v) forall { u =>
+        d(v) % 2 != d(u) % 2 // 全エッジの両端の深さの偶奇が異なっている
+      }
+    }
   }
 
   /**
