@@ -19,6 +19,28 @@ package object integer {
     res
   }
 
+  /**
+    * sa + tb = gcd(a, b) の (s, t) の組みを返す
+    * @return (s, t)
+    */
+  def gcd_ext(a: A, b: A): (A, A) = {
+    case class Bezout(r: A, s: A, t: A)
+    def step(st0: Bezout, st1: Bezout): (A, A) = {
+      if (st1.r == 0) {
+        (st0.s, st0.t)
+      } else {
+        val q = st0.r / st1.r
+        val r = st0.r - q * st1.r
+        val s = st0.s - q * st1.s
+        val t = st0.t - q * st1.t
+        val st2 = Bezout(r, s, t)
+        step(st1, st2)
+      }
+    }
+
+    step(Bezout(a, 1, 0), Bezout(b, 0, 1))
+  }
+
   /*
     * 10^18までのpowを配列で用意しておく
     */
@@ -164,6 +186,22 @@ package object integer {
     def comb(n: Int, k: Int): Long = {
       if (n < k) 0
       else F(n) * I(n - k) % MOD * I(k) % MOD
+    }
+  }
+
+  def ceil(x: Long, div: Long) = {
+    if (x < 0 && div >= 0 || x >= 0 && div < 0) {
+      x / div
+    } else {
+      x / div + (if (x % div != 0) 1 else 0)
+    }
+  }
+
+  def floor(x: Long, div: Long) = {
+    if (x < 0 && div >= 0 || x >= 0 && div < 0) {
+      x / div + (if (x % div != 0) -1 else 0)
+    } else {
+      x / div
     }
   }
 
