@@ -187,6 +187,18 @@ package object integer {
       if (n < k) 0
       else F(n) * I(n - k) % MOD * I(k) % MOD
     }
+
+    def rev(x: Int) = {
+      I(x) * F(x - 1)
+    }
+
+    /**
+      * nのグループからk回重複ありで選ぶ組み合わせ数
+      * n - 1のしきりとkの○で考える
+      */
+    def H(n: Int, k: Int) = {
+      comb(n + k - 1, k)
+    }
   }
 
   def ceil(x: Long, div: Long) = {

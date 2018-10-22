@@ -1,3 +1,5 @@
+import lang._
+
 package object utils {
 
   type A = Long
@@ -64,5 +66,13 @@ package object utils {
     }
 
     step(-1, a.length)
+  }
+
+  def cum(as: Array[A]) = {
+    val c = Array.ofDim[A](as.length + 1)
+    rep(as.length) { i =>
+      c(i + 1) = c(i) + as(i)
+    }
+    c
   }
 }
