@@ -53,7 +53,6 @@ package object collection {
   }
 
   /**
-    * todo テストすれ
     * あとパフォーマンス調べろ
     */
   def radixSort(f: Array[Long]): Array[Long] = radixSort(f, f.length)

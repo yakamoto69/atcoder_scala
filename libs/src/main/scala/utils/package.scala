@@ -42,6 +42,7 @@ package object utils {
   }
 
   // あえてコピペ
+  // 要はcountLt
   def lowerBound(a: Array[A], x: A): Int = {
     def step(l: Int, h: Int): Int = {
       if (h - l == 1) h
@@ -55,6 +56,7 @@ package object utils {
     step(-1, a.length)
   }
 
+  // 要はcountLe
   def upperBound(a: Array[A], x: A): Int = {
     def step(l: Int, h: Int): Int = {
       if (h - l == 1) h
@@ -66,13 +68,5 @@ package object utils {
     }
 
     step(-1, a.length)
-  }
-
-  def cum(as: Array[A]) = {
-    val c = Array.ofDim[A](as.length + 1)
-    rep(as.length) { i =>
-      c(i + 1) = c(i) + as(i)
-    }
-    c
   }
 }

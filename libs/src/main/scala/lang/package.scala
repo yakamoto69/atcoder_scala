@@ -11,8 +11,25 @@ package object lang {
   def ns(): String = sc.next()
   def ns(n: Int): Array[Char] = ns().toCharArray
   def na(n: Int): Array[Int] = map(n)(_ => ni())
-  def nm(n: Int, m: Int): Array[Array[Char]] = map(n) (_ => ns(m))
-
+  def na2(n: Int, offset: Int = 0): (Array[Int], Array[Int]) = {
+    val A1, A2 = Array.ofDim[Int](n)
+    rep(n) { i =>
+      A1(i) = ni() + offset
+      A2(i) = ni() + offset
+    }
+    (A1, A2)
+  }
+  def nm(n: Int, m: Int): Array[Array[Int]] = {
+    val A = Array.ofDim[Int](n, m)
+    rep(n) { i =>
+      rep(m) { j =>
+        A(i)(j) = ni()
+      }
+    }
+    A
+  }
+  def nal(n: Int): Array[Long] = map(n)(_ => nl())
+  def nm_c(n: Int, m: Int): Array[Array[Char]] = map(n) (_ => ns(m))
   def rep(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
     var i = offset
     val N = n + offset
@@ -27,6 +44,20 @@ package object lang {
     val res = Array.ofDim[A](n)
     rep(n)(i => res(i) = f(i))
     res
+  }
+
+  def sumL(as: Array[Int]): Long = {
+    var s = 0L
+    rep(as.length)(i => s += as(i))
+    s
+  }
+
+  def cumSum(as: Array[Int]) = {
+    val cum = Array.ofDim[Int](as.length + 1)
+    rep(as.length) { i =>
+      cum(i + 1) = cum(i) + as(i)
+    }
+    cum
   }
 
   implicit class ArrayOpts[A](val as: Array[A]) extends AnyVal {

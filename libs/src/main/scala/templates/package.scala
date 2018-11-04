@@ -1,6 +1,8 @@
 import utils._
 import integer._
-import math._
+import math.{min, max}
+import graph._
+import lang._
 
 package object templates {
 
@@ -61,6 +63,61 @@ package object templates {
       val x1 = b0 * t + x
       val y1 = -a0 * t + y
       f(x1, y1)
+    }
+  }
+
+  /**
+    * nCk を全羅列する方法
+    */
+  def next_comb_bit(n: Int, k: Int) {
+    var flag = pow2(n) - 1
+    while(flag < pow2(n)) {
+      val x = flag & -flag // 一番右の1
+      val y = flag + x // 連続した1を0に、１個上のビットを1にする
+      val z = flag & ~y // 連続した1部分
+      flag = (z / x >> 1) | y // 連続した1を一つ減らして一番右に移動 + y
+    }
+  }
+
+  /**
+    * 全ノードの組みのパスのsumをパスの長さが偶奇のもので分けて数える
+    */
+  def treeDP_sum_path_parity(N: Int, t: Array[Array[Int]]): Unit = {
+    val (_, p, q) = traceBfs(t)
+    val sum = Array.ofDim[Long](2, 2) // パスの長さ (Σlen, 個数)
+    val dp = Array.ofDim[Long](N, 2, 2) // 深さ (Σdepth, 個数)
+    rep_r(N) { i =>
+      val v = q(i)
+      // vを追加
+      dp(v)(0)(1) += 1
+
+      t(v) foreach { u =>
+        if (p(v) != u) {
+          // si = ciΣdi
+          def cl(x: Int) = dp(v)(x)(1)
+          def sl(x: Int) = dp(v)(x)(0)
+          def cr(x: Int) = dp(u)(x)(1)
+          def sr(x: Int) = dp(u)(x)(0) + cr(x) // 個数*1を足す
+
+          // u側が１深くなるので偶奇が反転する
+          rep(2) { xl =>
+            rep(2) { xr =>
+              // si = ciΣdi なので、
+              // c1Σc2Σ(d1 + d2) = c2Σ(s1 + c1・d2) = s1・c2 + c1 + s2 -- パスのsum
+              // c1Σc2Σ(1) = c1・c2 -- 組み合わせ数
+              sum(xl ^ xr ^ 1)(0) += (sl(xl) * cr(xr) + sr(xr) * cl(xl))
+              sum(xl ^ xr ^ 1)(1) += cl(xl) * cr(xr) // c1 * c2
+            }
+          }
+
+          // dp(v)にdp(u)をマージする
+          rep(2) { x =>
+            // 1深くなるので反転する
+            dp(v)(x)(0) += sr(x ^ 1)
+            dp(v)(x)(1) += cr(x ^ 1)
+          }
+        }
+      }
     }
   }
 }
