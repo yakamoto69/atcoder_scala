@@ -1,8 +1,13 @@
 object Main {
+  import java.io.PrintStream
+
   def main(args: Array[String]): Unit = {
     val s = new Main()
-    s.solve()
-    s.out.flush()
+    val ps = new PrintStream(Console.out)
+    Console.withOut(ps) {
+      s.solve()
+    }
+    ps.flush()
   }
 }
 
@@ -15,17 +20,16 @@ class Main {
   import math.{abs, max, min}
   import mutable.{ArrayBuffer, ListBuffer}
   import scala.reflect.ClassTag
+  import scala.Console
 
   val MOD = 1000000007
-  val out = new PrintWriter(System.out)
 
   def solve(): Unit = {
     val N = ni()
   }
 
 
-  class InputReader(val stream: InputStream) {
-    private val reader = new BufferedReader(new InputStreamReader(stream), 32768)
+  class InputReader(reader: BufferedReader) {
     private var tokenizer: StringTokenizer = _
 
     def next(): String = {
@@ -38,13 +42,13 @@ class Main {
     def nextLong(): Long = next().toLong
     def nextChar(): Char = next().charAt(0)
   }
-  val sc = new InputReader(System.in)
+  val sc = new InputReader(Console.in)
   def ni(): Int = sc.nextInt()
   def nl(): Long = sc.nextLong()
   def nc(): Char = sc.nextChar()
   def ns(): String = sc.next()
   def ns(n: Int): Array[Char] = ns().toCharArray
-  def na(n: Int): Array[Int] = map(n)(_ => ni())
+  def na(n: Int, offset: Int = 0): Array[Int] = map(n)(_ => ni() + offset)
   def na2(n: Int, offset: Int = 0): (Array[Int], Array[Int]) = {
     val A1, A2 = Array.ofDim[Int](n)
     rep(n) { i =>
