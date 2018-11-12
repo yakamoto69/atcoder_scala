@@ -41,17 +41,15 @@ object Tester {
       println(s"Test${i+1}")
 
       val out = new ByteArrayOutputStream()
-      val po = new PrintStream(out)
-      val in = new ByteArrayInputStream(test.in.getBytes("utf-8"))
+      System.setIn(new ByteArrayInputStream(test.in.getBytes("utf-8")))
+      System.setOut(new PrintStream(out))
 
       val s = System.nanoTime()
-      scala.Console.withOut(po) {
-        scala.Console.withIn(in) {
-          val solver = new Main()
-          solver.solve()
-        }
-      }
-      po.flush()
+
+      val solver = new Main()
+      solver.solve()
+      solver.out.flush()
+
       val e = System.nanoTime()
 
       val actual = out.toString("utf-8").trim

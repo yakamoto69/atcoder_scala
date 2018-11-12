@@ -1,13 +1,8 @@
 object Main {
-  import java.io.PrintStream
-
   def main(args: Array[String]): Unit = {
     val s = new Main()
-    val ps = new PrintStream(Console.out)
-    Console.withOut(ps) {
-      s.solve()
-    }
-    ps.flush()
+    s.solve()
+    s.out.flush()
   }
 }
 
@@ -20,16 +15,16 @@ class Main {
   import math.{abs, max, min}
   import mutable.{ArrayBuffer, ListBuffer}
   import scala.reflect.ClassTag
-  import scala.Console
 
   val MOD = 1000000007
+  val out = new PrintWriter(System.out)
 
   def solve(): Unit = {
     val N = ni()
   }
 
-
-  class InputReader(reader: BufferedReader) {
+  class InputReader(val stream: InputStream) {
+    private val reader = new BufferedReader(new InputStreamReader(stream), 32768)
     private var tokenizer: StringTokenizer = _
 
     def next(): String = {
@@ -42,7 +37,7 @@ class Main {
     def nextLong(): Long = next().toLong
     def nextChar(): Char = next().charAt(0)
   }
-  val sc = new InputReader(Console.in)
+  val sc = new InputReader(System.in)
   def ni(): Int = sc.nextInt()
   def nl(): Long = sc.nextLong()
   def nc(): Char = sc.nextChar()
@@ -78,11 +73,12 @@ class Main {
     while(i >= offset) { f(i); i -= 1 }
   }
 
-  def map[@specialized A: ClassTag](n: Int)(f: Int => A): Array[A] = {
+  def map[@specialized A: ClassTag](n: Int, offset: Int = 0)(f: Int => A): Array[A] = {
     val res = Array.ofDim[A](n)
-    rep(n)(i => res(i) = f(i))
+    rep(n)(i => res(i) = f(i + offset))
     res
   }
+
 
   def sumL(as: Array[Int]): Long = {
     var s = 0L

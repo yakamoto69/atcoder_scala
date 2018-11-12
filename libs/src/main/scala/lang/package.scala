@@ -40,9 +40,9 @@ package object lang {
     while(i >= offset) { f(i); i -= 1 }
   }
 
-  def map[@specialized A: ClassTag](n: Int)(f: Int => A): Array[A] = {
+  def map[@specialized A: ClassTag](n: Int, offset: Int = 0)(f: Int => A): Array[A] = {
     val res = Array.ofDim[A](n)
-    rep(n)(i => res(i) = f(i))
+    rep(n)(i => res(i) = f(i + offset))
     res
   }
 

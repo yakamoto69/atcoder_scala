@@ -2,8 +2,42 @@ import lang._
 import scala.util.Sorting
 import math.{min, max}
 import rmq.SegmentTree
+import lang._
 
 package object string {
+
+  class KMP(word: String) {
+    val kmp: Array[Int] = Array.ofDim[Int](word.length + 1)
+    2 to word.length foreach { i =>
+      var j = kmp(i - 1)
+      var continues = true
+      while(continues) {
+        if (word(j) == word(i - 1)) {
+          j += 1
+          continues = false
+        } else if (j == 0) continues = false
+        else j = kmp(j)
+      }
+      kmp(i) = j
+    }
+
+    def findFirst(text: String): Int = {
+      var j = 0
+      rep(text.length) { i =>
+        var continues = true
+        while(continues) {
+          if (word(j) == text(i)) {
+            j += 1
+            continues = false
+          } else if (j == 0) continues = false
+          else j = kmp(j)
+        }
+        if (j == word.length) return i - word.length + 1
+      }
+      -1
+    }
+  }
+
   /**
     * 大文字小文字が混ざってる場合はうまくいかないので注意
     */
