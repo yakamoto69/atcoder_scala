@@ -1,21 +1,25 @@
 package rmq
 
+import scala.reflect.ClassTag
+
 /**
   * @param n 個数 最大値じゃないぞ。
   * iの範囲は[0, n - 1]
+  *
+  * AがIntやLongのときは埋め込んでしまおう
+  * type A = Int
   */
-class SegmentTree(n: Int, zero: A)(f: (A, A) => A) {
+class SegmentTree[A: ClassTag](n: Int, zero: A)(f: (A, A) => A) {
   private val N = {
     val a = Integer.highestOneBit(n)
     if (a == n) a else a << 1
   }
-  private val dat: Array[A] = if (zero != 0){
-    Array.fill(2 * N - 1)(zero)
-  } else {
-    Array.ofDim(2 * N - 1)
-  }
 
-  def update(i: Int, a: Int): Unit = {
+  // zero == 0のときは初期化いらない
+  private val dat: Array[A] = Array.fill(2 * N - 1)(zero)
+
+  def update(i: Int, a: A): Unit = {
+    assert(i < n)
     var k = N - 1 + i
     dat(k) = a
     while(k > 0) {
@@ -26,8 +30,11 @@ class SegmentTree(n: Int, zero: A)(f: (A, A) => A) {
 
   /**
     * [a, b)
+    * [a, a) もok。この場合はzeroが返る
     */
   def query(a: Int, b: Int): A = {
+    assert(a <= n && b <= n && a <= b)
+
     def step(k: Int, l: Int, r: Int): A = {
       if (r <= a || b <= l) {
         zero
@@ -40,6 +47,7 @@ class SegmentTree(n: Int, zero: A)(f: (A, A) => A) {
       }
     }
 
-    step(0, 0, N)
+    if (a == b) zero
+    else step(0, 0, N)
   }
 }

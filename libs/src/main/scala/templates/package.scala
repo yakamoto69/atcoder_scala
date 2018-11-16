@@ -1,6 +1,6 @@
 import utils._
 import integer._
-import math.{min, max}
+import math.{min, max, abs}
 import graph._
 import lang._
 
@@ -35,6 +35,18 @@ package object templates {
   def calcOtherSide(c: Double, a: Double): Double = {
     Math.sqrt(c + a) * Math.sqrt(c - a)
   }
+
+  def binSearch(ms: Int, mx: Int)(f: Int => Boolean): Int = {
+    var high = mx + 1
+    var low = ms - 1
+    while(abs(high - low) > 1) {
+      val mid = (high + low) / 2
+      if (f(mid)) high = mid
+      else low = mid
+    }
+    high
+  }
+
 
   /**
     * a, b は正の数。負だと不等式がひっくり返ってめんどう

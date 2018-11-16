@@ -126,12 +126,14 @@ package object graph {
     * Lowest Common Ancestor
     */
   {
-    val NN = 100000
-    val K = 20
-    val g: Array[Array[Int]] = ???
+    val NN = 100000 // 要素数
+    val K = 20 // 2^(K-1) >= NN なのか？ダブリングの深さ
+    val g: Array[Array[Int]] = ??? // packで作ったグラフが必要
+    val ZERO = -1
 
     val (depth, parent, _) = traceBfs(g)
     parent(0) = 0
+
     val anc = Array.ofDim[Int](K, NN)
     rep(NN) { i =>
       anc(0)(i) = parent(i)
@@ -152,6 +154,9 @@ package object graph {
       step(v, 0, d)
     }
 
+    /**
+      * lca(v, ZERO) = v
+      */
     def lca(v: Int, u: Int): Int = {
       def step(v0: Int, u0: Int, k: Int): Int = {
         if (k == -1) {
@@ -163,11 +168,15 @@ package object graph {
         }
       }
 
-      val d = min(depth(v), depth(u))
-      val v0 = getParent(v, depth(v) - d)
-      val u0 = getParent(u, depth(u) - d)
-      if (v0 == u0) v0 // この時点で同じだったらダブリングで調べる必要がない
-      else step(v0, u0, anc.length - 1)
+      if (v == ZERO) u
+      else if (u == ZERO) v
+      else {
+        val d = min(depth(v), depth(u))
+        val v0 = getParent(v, depth(v) - d)
+        val u0 = getParent(u, depth(u) - d)
+        if (v0 == u0) v0 // この時点で同じだったらダブリングで調べる必要がない
+        else step(v0, u0, anc.length - 1)
+      }
     }
   }
 }

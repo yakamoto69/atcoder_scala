@@ -69,13 +69,26 @@ package object integer {
     * log2して小数点切り捨てたもの
     */
   def log2(x: Int): Int = {
-    var a = Integer.highestOneBit(x)
-    var i = 0
+    assert(x > 0)
+    var a = x
+    var i = 0 // 何回2で割ったら1になるか
     while(a > 1) {
       i += 1
       a >>>= 1
     }
     i
+  }
+
+  /**
+    * log2の小数点を切り上げたもの
+    */
+  def log2_ceil(x: Int): Int = {
+    assert(x > 0)
+    if (x == 1) {
+      0
+    } else {
+      log2(x - 1) + 1
+    }
   }
 
   /**
