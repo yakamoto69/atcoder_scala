@@ -124,11 +124,11 @@ package object graph {
 
   /**
     * Lowest Common Ancestor
+    * @param g packで作ったグラフでおきかえること
     */
-  {
+  def LCA(g: Array[Array[Int]]){
     val NN = 100000 // 要素数
     val K = 20 // 2^(K-1) >= NN なのか？ダブリングの深さ
-    val g: Array[Array[Int]] = ??? // packで作ったグラフが必要
     val ZERO = -1
 
     val (depth, parent, _) = traceBfs(g)
