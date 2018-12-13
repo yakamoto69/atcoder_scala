@@ -47,6 +47,24 @@ package object templates {
     high
   }
 
+  /**
+    * 最大M個のグループに分割してグループ毎の配列に入れる
+    */
+  def grouped(N: Int, M: Int, g: Array[Int], v: Array[Int]): Array[Array[Int]] = {
+    val cnt = Array.ofDim[Int](M)
+    val C = Array.ofDim[Array[Int]](M)
+    REP(N) { i =>
+      cnt(g(i)) += 1
+    }
+    REP(M) { i =>
+      C(i) = new Array(cnt(i))
+    }
+    REP_r(N) { i =>
+      cnt(g(i)) -= 1
+      C(g(i))(cnt(g(i))) = v(i)
+    }
+    C
+  }
 
   /**
     * a, b は正の数。負だと不等式がひっくり返ってめんどう
@@ -98,7 +116,7 @@ package object templates {
     val (_, p, q) = traceBfs(t)
     val sum = Array.ofDim[Long](2, 2) // パスの長さ (Σlen, 個数)
     val dp = Array.ofDim[Long](N, 2, 2) // 深さ (Σdepth, 個数)
-    rep_r(N) { i =>
+    REP_r(N) { i =>
       val v = q(i)
       // vを追加
       dp(v)(0)(1) += 1
@@ -112,8 +130,8 @@ package object templates {
           def sr(x: Int) = dp(u)(x)(0) + cr(x) // 個数*1を足す
 
           // u側が１深くなるので偶奇が反転する
-          rep(2) { xl =>
-            rep(2) { xr =>
+          REP(2) { xl =>
+            REP(2) { xr =>
               // si = ciΣdi なので、
               // c1Σc2Σ(d1 + d2) = c2Σ(s1 + c1・d2) = s1・c2 + c1 + s2 -- パスのsum
               // c1Σc2Σ(1) = c1・c2 -- 組み合わせ数
@@ -123,7 +141,7 @@ package object templates {
           }
 
           // dp(v)にdp(u)をマージする
-          rep(2) { x =>
+          REP(2) { x =>
             // 1深くなるので反転する
             dp(v)(x)(0) += sr(x ^ 1)
             dp(v)(x)(1) += cr(x ^ 1)

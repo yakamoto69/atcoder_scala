@@ -42,7 +42,7 @@ object UnionFind {
   def countDisjointSets(n: Int, V: Array[Int], U: Array[Int]): Int = {
     val uf = new UnionFind(n)
     var cnt = n
-    rep(V.length) { i =>
+    REP(V.length) { i =>
       if (uf.find(U(i)) != uf.find(V(i))) {
         uf.unite(U(i), V(i))
         cnt -= 1
@@ -53,7 +53,7 @@ object UnionFind {
 
   def countDisjointSets(uf: UnionFind): Int = {
     var cnt = 0
-    rep(uf.n) { i =>
+    REP(uf.n) { i =>
       if (uf.find(i) == i) cnt += 1
     }
     cnt
@@ -63,9 +63,9 @@ object UnionFind {
     val N = uf.n
     val cnt = Array.ofDim[Int](N)
     val disjoints = Array.ofDim[Array[Int]](N)
-    rep(N) { i => cnt(uf.find(i)) += 1 }
-    rep(N) { i => disjoints(i) = Array.ofDim(cnt(uf.find(i))) }
-    rep(N) { i =>
+    REP(N) { i => cnt(uf.find(i)) += 1 }
+    REP(N) { i => disjoints(i) = Array.ofDim(cnt(uf.find(i))) }
+    REP(N) { i =>
       val id = uf.find(i)
       disjoints(id)(cnt(id) - 1) = i
       cnt(id) -= 1

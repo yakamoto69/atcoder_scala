@@ -17,15 +17,15 @@ class BITSpec extends FlatSpec with GeneratorDrivenPropertyChecks with Matchers 
 
       def test(): Unit = {
         val cum = Array.ofDim[Long](n + 1)
-        rep(n)(i => cum(i + 1) = cum(i) + v(i))
+        REP(n)(i => cum(i + 1) = cum(i) + v(i))
 
-        rep(n) { i =>
+        REP(n) { i =>
           withClue(s"sum($i): "){t.sum(i + 1) should be(cum(i + 1))}
         }
 
         withClue(s"sumAll: "){t.sumAll should be(cum(n))}
 
-        rep(n) { l =>
+        REP(n) { l =>
           val r = l + genNum(n - l).sample.get
           withClue(s"query($l, $r): "){t.query(l, r)(_ - _) should be(cum(r) - cum(l))}
         }

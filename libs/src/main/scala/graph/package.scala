@@ -17,7 +17,7 @@ package object graph {
     while(!queue.isEmpty) {
       val v = queue.poll()
       if (d(v.node) == v.cost) {
-        rep(g(v.node).length) { i =>
+        REP(g(v.node).length) { i =>
           val e = g(v.node)(i)
           val next = v.cost + e.weight
           if (d(e.to) > next) {
@@ -40,10 +40,10 @@ package object graph {
     val g = new Array[Array[Edge]](n)
     val p = new Array[Int](n)
     val m = from.length
-    rep(m)(i => p(from(i)) += 1)
-    rep(m)(i => p(to(i)) += 1)
-    rep(n)(i => g(i) = new Array(p(i)))
-    rep(m) { i =>
+    REP(m)(i => p(from(i)) += 1)
+    REP(m)(i => p(to(i)) += 1)
+    REP(n)(i => g(i) = new Array(p(i)))
+    REP(m) { i =>
       p(from(i)) -= 1
       g(from(i))(p(from(i))) = Edge(to(i), w(i))
       p(to(i)) -= 1
@@ -59,10 +59,10 @@ package object graph {
     val t = new Array[Array[Int]](n)
     val p = new Array[Int](n)
     val m = from.length
-    rep(m)(i => p(from(i)) += 1)
-    rep(m)(i => p(to(i)) += 1)
-    rep(n)(i => t(i) = new Array(p(i)))
-    rep(m) { i =>
+    REP(m)(i => p(from(i)) += 1)
+    REP(m)(i => p(to(i)) += 1)
+    REP(n)(i => t(i) = new Array(p(i)))
+    REP(m) { i =>
       p(from(i)) -= 1
       t(from(i))(p(from(i))) = to(i)
       p(to(i)) -= 1
@@ -75,9 +75,9 @@ package object graph {
     val t = new Array[Array[Int]](n)
     val p = new Array[Int](n)
     val m = from.length
-    rep(m)(i => p(from(i)) += 1)
-    rep(n)(i => t(i) = new Array(p(i)))
-    rep(m) { i =>
+    REP(m)(i => p(from(i)) += 1)
+    REP(n)(i => t(i) = new Array(p(i)))
+    REP_r(m) { i => // 順序維持する
       p(from(i)) -= 1
       t(from(i))(p(from(i))) = to(i)
     }
@@ -99,7 +99,7 @@ package object graph {
     var last = 1
     while (cur < last) {
       val v = q(cur)
-      rep(g(v).length) { i =>
+      REP(g(v).length) { i =>
         val u = g(v)(i)
         if (d(u) == INF) {
           d(u) = d(v) + 1
@@ -111,6 +111,43 @@ package object graph {
       cur += 1
     }
     (d, p, q)
+  }
+
+  /**
+    * @return (depth, parent, tour)
+    */
+  def traceDfs(g: Array[Array[Int]], rt: Int = 0): (Array[Int], Array[Int], Array[Int]) = {
+    val n = g.length
+    val stack = mutable.Stack[Int]()
+    val ix = Array.ofDim[Int](n)
+    val tour = Array.ofDim[Int](n)
+    val depth = Array.ofDim[Int](n)
+    val parent = Array.ofDim[Int](n)
+    parent(rt) = -1
+    var p = 0
+
+    tour(p) = rt
+    p += 1
+    stack.push(rt)
+
+    while(stack.nonEmpty) {
+      val v = stack.top
+      val es = g(v)
+      if (ix(v) == es.length) stack.pop()
+      else {
+        val u = es(ix(v))
+        if (u != parent(v)) {
+          parent(u) = v
+          depth(u) = depth(v) + 1
+          stack.push(u)
+          tour(p) = u
+          p += 1
+        }
+        ix(v) += 1
+      }
+    }
+
+    (depth, parent, tour)
   }
 
   def isBipartite(g: Array[Array[Int]]): Boolean = {
@@ -135,11 +172,11 @@ package object graph {
     parent(0) = 0
 
     val anc = Array.ofDim[Int](K, NN)
-    rep(NN) { i =>
+    REP(NN) { i =>
       anc(0)(i) = parent(i)
     }
-    rep(anc.length - 1, 1) { k =>
-      rep(NN) { i =>
+    REP(anc.length - 1, 1) { k =>
+      REP(NN) { i =>
         anc(k)(i) = anc(k-1)(anc(k-1)(i))
       }
     }

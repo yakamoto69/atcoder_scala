@@ -14,7 +14,7 @@ package object tree {
     val queue = Array.ofDim[Int](n)
     val degree = Array.ofDim[Int](n)
     val lvl = Array.ofDim[Int](n)
-    rep(n) { i =>
+    REP(n) { i =>
       degree(i) = t(i).length
       if (degree(i) == 1) {
         queue(p) = i
@@ -22,10 +22,10 @@ package object tree {
       }
     }
 
-    while(cur < n) {
+    while(cur < p) {
       val v = queue(cur)
       cur += 1
-      rep(t(v).length) { i =>
+      REP(t(v).length) { i =>
         val u = t(v)(i)
 
         // parentを探す

@@ -1,6 +1,6 @@
 package graph
 
-import lang.rep
+import lang.REP
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -50,7 +50,7 @@ package object misc {
     }
 
     var res = 0
-    rep(g.length) { v =>
+    REP(g.length) { v =>
       if (m(v) < 0) {
         java.util.Arrays.fill(used, false)
         if (dfs(v)) res += 1

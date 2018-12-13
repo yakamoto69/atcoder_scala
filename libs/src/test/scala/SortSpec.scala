@@ -17,4 +17,11 @@ class SortSpec extends FlatSpec with GeneratorDrivenPropertyChecks with Matchers
       collection.radixSort(as) should be(base.sorted.toArray)
     }
   }
+
+  "sort" should "sort any long arrays" in {
+    forAll(Gen.listOf(Arbitrary.arbLong.arbitrary)) { base =>
+      val as = base.toArray
+      collection.sort(as) should be(base.sorted.toArray)
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import lang._
 import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 import math.min
 
 package object integer {
@@ -13,7 +14,7 @@ package object integer {
 
   def gcd(as: Array[A]): A = {
     var res = as(0)
-    rep(as.length - 1, 1) { i =>
+    REP(as.length - 1, 1) { i =>
       res = gcd(res, as(i))
     }
     res
@@ -46,11 +47,11 @@ package object integer {
     */
   val pow10 = Array.ofDim[Long](19)
   pow10(0) = 1
-  rep(18)(i => pow10(i + 1) = pow10(i) * 10)
+  REP(18)(i => pow10(i + 1) = pow10(i) * 10)
 
   val pow2 = Array.ofDim[Long](32)
   pow2(0) = 1
-  rep(pow2.length - 1)(i => pow2(i + 1) = pow2(i) * 2)
+  REP(pow2.length - 1)(i => pow2(i + 1) = pow2(i) * 2)
 
   /**
     * @return (log10の整数値, 最大桁の値)
@@ -104,6 +105,26 @@ package object integer {
       }
     }
     step(x, n, 1).toInt
+  }
+
+  /**
+    * O(√x)
+    */
+  def divisors(x: Int): Array[Int] = {
+    val pre = ArrayBuffer[Int]()
+    val post = ArrayBuffer[Int]()
+    REP(math.sqrt(x).toInt, 1) { d =>
+      if (x % d == 0) {
+        pre += d
+        if (d * d != x) post += x / d
+      }
+    }
+
+    val res = Array.ofDim[Int](pre.length + post.length)
+    REP(pre.length)(i => res(i) = pre(i))
+    val preLen = pre.length
+    REP_r(post.length)(i => res(i + preLen) = post(i))
+    res
   }
 
   // Euler's Sieve
@@ -183,7 +204,7 @@ package object integer {
 
     val F = Array.ofDim[Long](NN + 1)
     F(0) = 1
-    rep(NN) { i =>
+    REP(NN) { i =>
       F(i + 1) = F(i) * (i + 1) % MOD
     }
     val I = Array.ofDim[Long](F.length)
@@ -192,7 +213,7 @@ package object integer {
     // x! = x(x-1)!
     // x!I(x!) ≡ (x-1)!I((x-1)!)
     // I((x-1)!) ≡ I(x!) * x   MODがでかいので(x-1)!はMODと素
-    rep_r(NN) { i =>
+    REP_r(NN) { i =>
       I(i) = I(i + 1) * (i + 1) % MOD
     }
 

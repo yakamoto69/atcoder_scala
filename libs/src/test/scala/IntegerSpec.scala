@@ -14,13 +14,13 @@ class IntegerSpec extends FlatSpec with Matchers {
   }
 
   "log2" should "return floored log2" in {
-    rep(1e6.toInt, 1) { x =>
+    REP(1e6.toInt, 1) { x =>
       1 << log2(x) should be (Integer.highestOneBit(x))
     }
   }
 
   "log2_ceil" should "return ceiled log2" in {
-    rep(1e6.toInt, 1) { x =>
+    REP(1e6.toInt, 1) { x =>
       val expected = if (x == Integer.highestOneBit(x)) log2(x) else log2(x << 1)
       log2_ceil(x) should be (expected)
     }
