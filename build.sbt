@@ -8,7 +8,7 @@ lazy val root = (project in file("."))
     name := "atcoder"
   )
 
-lazy val util = (project in file("libs"))
+lazy val libs = (project in file("libs"))
   .settings(
     commonSettings,
     libraryDependencies ++= Seq(
@@ -16,3 +16,8 @@ lazy val util = (project in file("libs"))
       "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
     )
   )
+
+lazy val tests = (project in file("tests"))
+  .settings(
+    commonSettings
+  ).dependsOn(root, libs)
