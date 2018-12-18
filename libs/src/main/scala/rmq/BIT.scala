@@ -11,10 +11,13 @@ class BIT(n: Int, zero: A)(f: (A, A) => A) {
   private val bit = if (zero != 0) Array.fill[A](N + 1)(zero) else Array.ofDim[A](N + 1)
 
   /**
-    * 0 index
+    * 1 index
+    * addとindex違うよ
+    * cumsumなんかといっしょ
     */
   def sum(i: Int): A = {
-    var x = i + 1
+    assert(i <= n)
+    var x = i
     var s: A = 0
     while(x > 0) {
       s = f(s, bit(x))
@@ -27,11 +30,22 @@ class BIT(n: Int, zero: A)(f: (A, A) => A) {
     * 0 index
     */
   def add(i: Int, a: A): Unit = {
+    assert(i < n)
     var x = i + 1
     while(x <= N) {
       bit(x) = f(bit(x), a)
       x += x & -x
     }
+  }
+
+  def sumAll: A = sum(n)
+
+  /**
+    * [l, r)
+    */
+  def query(l: Int, r: Int)(sub: (A, A) => A): A = {
+    assert(r > l)
+    sub(sum(r), sum(l))
   }
 }
 

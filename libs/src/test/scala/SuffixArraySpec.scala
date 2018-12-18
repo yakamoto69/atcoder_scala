@@ -1,4 +1,5 @@
 import lang._
+import testlang._
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
@@ -8,8 +9,6 @@ import math.min
 import org.scalacheck.Shrink
 
 class SuffixArraySpec extends FlatSpec with GeneratorDrivenPropertyChecks with Matchers {
-
-  implicit def noShrink[T]: Shrink[T] = Shrink.shrinkAny
 
   "suffixArray" should "generates suffix array sorted alphabetically" in {
     forAll(Gen.alphaStr) { sArg =>

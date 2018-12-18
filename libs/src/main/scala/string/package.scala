@@ -2,8 +2,42 @@ import lang._
 import scala.util.Sorting
 import math.{min, max}
 import rmq.SegmentTree
+import lang._
 
 package object string {
+
+  class KMP(word: String) {
+    val kmp: Array[Int] = Array.ofDim[Int](word.length + 1)
+    2 to word.length foreach { i =>
+      var j = kmp(i - 1)
+      var continues = true
+      while(continues) {
+        if (word(j) == word(i - 1)) {
+          j += 1
+          continues = false
+        } else if (j == 0) continues = false
+        else j = kmp(j)
+      }
+      kmp(i) = j
+    }
+
+    def findFirst(text: String): Int = {
+      var j = 0
+      REP(text.length) { i =>
+        var continues = true
+        while(continues) {
+          if (word(j) == text(i)) {
+            j += 1
+            continues = false
+          } else if (j == 0) continues = false
+          else j = kmp(j)
+        }
+        if (j == word.length) return i - word.length + 1
+      }
+      -1
+    }
+  }
+
   /**
     * 大文字小文字が混ざってる場合はうまくいかないので注意
     */
@@ -12,7 +46,7 @@ package object string {
 
     val sa = Array.iterate(0, n + 1)(_ + 1)
     val rank, tmp = Array.ofDim[Int](n + 1)
-    rep(n) { i =>
+    REP(n) { i =>
       rank(i) = s(i)
     }
     rank(n) = -1
@@ -34,7 +68,7 @@ package object string {
 
       // 次のlen*2の長さで並び替えたsaからrankの値を計算する
       tmp(sa(0)) = 0
-      rep(n, 1) { i =>
+      REP(n, 1) { i =>
         tmp(sa(i)) = tmp(sa(i - 1)) + (if (lt(len)(sa(i - 1), sa(i))) 1 else 0) // 前の順位のものより大きい場合は+1する
       }
 
@@ -48,11 +82,11 @@ package object string {
     val n = s.length
     val lcp = Array.ofDim[Int](n + 1)
     val rank = Array.ofDim[Int](n + 1)
-    rep(n + 1) { i =>
+    REP(n + 1) { i =>
       rank(sa(i)) = i
     }
     var h = 0
-    rep(n) { i =>
+    REP(n) { i =>
       val j = sa(rank(i) - 1) // sa上で１個前
       h = max(0, h - 1)
       while(i + h < n && j + h < n && s(i + h) == s(j + h)) {
@@ -67,7 +101,7 @@ package object string {
     private val (lcp, rank) = longestCommonPrefix(s, suffixArray(s))
 
     private val t = new SegmentTree(s.length, Integer.MAX_VALUE / 2)(min)
-    rep(s.length) { i =>
+    REP(s.length) { i =>
       t.update(i, lcp(i + 1))
     }
 

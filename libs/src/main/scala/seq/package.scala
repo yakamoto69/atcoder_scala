@@ -43,9 +43,9 @@ package object seq {
     val r = a2(0).length
     val len = a1(0).length
     val res = Array.ofDim[Int](r, c)
-    rep(r) { i =>
-      rep(c) { j =>
-        rep(len) { k =>
+    REP(r) { i =>
+      REP(c) { j =>
+        REP(len) { k =>
           res(i)(j) = ((res(i)(j) + a1(j)(k).toLong * a2(k)(i)) % mod).toInt
         }
       }

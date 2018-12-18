@@ -13,7 +13,7 @@ package object lang {
   def na(n: Int): Array[Int] = map(n)(_ => ni())
   def na2(n: Int, offset: Int = 0): (Array[Int], Array[Int]) = {
     val A1, A2 = Array.ofDim[Int](n)
-    rep(n) { i =>
+    REP(n) { i =>
       A1(i) = ni() + offset
       A2(i) = ni() + offset
     }
@@ -21,8 +21,8 @@ package object lang {
   }
   def nm(n: Int, m: Int): Array[Array[Int]] = {
     val A = Array.ofDim[Int](n, m)
-    rep(n) { i =>
-      rep(m) { j =>
+    REP(n) { i =>
+      REP(m) { j =>
         A(i)(j) = ni()
       }
     }
@@ -30,31 +30,31 @@ package object lang {
   }
   def nal(n: Int): Array[Long] = map(n)(_ => nl())
   def nm_c(n: Int, m: Int): Array[Array[Char]] = map(n) (_ => ns(m))
-  def rep(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
+  def REP(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
     var i = offset
     val N = n + offset
     while(i < N) { f(i); i += 1 }
   }
-  def rep_r(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
+  def REP_r(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
     var i = n - 1 + offset
     while(i >= offset) { f(i); i -= 1 }
   }
 
-  def map[@specialized A: ClassTag](n: Int)(f: Int => A): Array[A] = {
+  def map[@specialized A: ClassTag](n: Int, offset: Int = 0)(f: Int => A): Array[A] = {
     val res = Array.ofDim[A](n)
-    rep(n)(i => res(i) = f(i))
+    REP(n)(i => res(i) = f(i + offset))
     res
   }
 
   def sumL(as: Array[Int]): Long = {
     var s = 0L
-    rep(as.length)(i => s += as(i))
+    REP(as.length)(i => s += as(i))
     s
   }
 
   def cumSum(as: Array[Int]) = {
     val cum = Array.ofDim[Int](as.length + 1)
-    rep(as.length) { i =>
+    REP(as.length) { i =>
       cum(i + 1) = cum(i) + as(i)
     }
     cum
@@ -68,13 +68,13 @@ package object lang {
 
     def grpBy[K](f: A => K): mutable.Map[K, ArrayBuffer[A]] = {
       val map = mutable.Map.empty[K, ArrayBuffer[A]]
-      rep(as.length)(i => map.getOrElseUpdate(f(as(i)), ArrayBuffer()) += as(i))
+      REP(as.length)(i => map.getOrElseUpdate(f(as(i)), ArrayBuffer()) += as(i))
       map
     }
 
     def sumBy[B](f: A => B)(implicit num: Numeric[B]): B = {
       var sum = num.zero
-      rep(as.length)(i => sum = num.plus(sum, f(as(i))))
+      REP(as.length)(i => sum = num.plus(sum, f(as(i))))
       sum
     }
 

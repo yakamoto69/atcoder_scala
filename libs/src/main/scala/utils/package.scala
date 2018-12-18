@@ -43,6 +43,7 @@ package object utils {
 
   // あえてコピペ
   // 要はcountLt
+  // a >= x  [x-2, x-1, x, x, x, x+1] の 2
   def lowerBound(a: Array[A], x: A): Int = {
     def step(l: Int, h: Int): Int = {
       if (h - l == 1) h
@@ -57,6 +58,7 @@ package object utils {
   }
 
   // 要はcountLe
+  // a > x  [x-2, x-1, x, x, x, x+1] の 5
   def upperBound(a: Array[A], x: A): Int = {
     def step(l: Int, h: Int): Int = {
       if (h - l == 1) h

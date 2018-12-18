@@ -1,4 +1,5 @@
 import lang._
+import testlang._
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
@@ -11,25 +12,30 @@ import SegmentTreeSpec._
 class BITSpec extends FlatSpec with GeneratorDrivenPropertyChecks with Matchers {
   "BIT" should "accumulate every segment" in {
     forAll(genSteps(50, 100)) { case (n, steps) =>
-      whenever(n > 0) {
-        val t = new BIT(n)
-        val v = Array.ofDim[Long](n)
+      val t = new BIT(n)
+      val v = Array.ofDim[Long](n)
 
-        def test(): Unit = {
-          val cum = Array.ofDim[Long](n + 1)
-          rep(n)(i => cum(i + 1) = cum(i) + v(i))
+      def test(): Unit = {
+        val cum = Array.ofDim[Long](n + 1)
+        REP(n)(i => cum(i + 1) = cum(i) + v(i))
 
-          rep(n) { i =>
-            withClue(s"sum($i): "){t.sum(i) should be(cum(i + 1))}
-          }
+        REP(n) { i =>
+          withClue(s"sum($i): "){t.sum(i + 1) should be(cum(i + 1))}
         }
 
-        // 引数が各々勝手にいじられるのでチェックしないといけない
-        steps.filter(_.i < n) foreach { case Step(i, num) =>
-          t.add(i, num)
-          v(i) += num
-          test()
+        withClue(s"sumAll: "){t.sumAll should be(cum(n))}
+
+        REP(n) { l =>
+          val r = l + genNum(n - l).sample.get
+          withClue(s"query($l, $r): "){t.query(l, r)(_ - _) should be(cum(r) - cum(l))}
         }
+      }
+
+      // 引数が各々勝手にいじられるのでチェックしないといけない
+      steps.filter(_.i < n) foreach { case Step(i, num) =>
+        t.add(i, num)
+        v(i) += num
+        test()
       }
     }
   }

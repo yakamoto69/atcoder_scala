@@ -1,10 +1,15 @@
 package rmq
 
+import scala.reflect.ClassTag
+
 /**
   * @param n 個数 最大値じゃないぞ。
   * iの範囲は[0, n - 1]
+  *
+  * AがIntやLongのときは埋め込んでしまおう
+  * type A = Int
   */
-class SegmentTree(n: Int, zero: A)(f: (A, A) => A) {
+class SegmentTree[A: ClassTag](n: Int, zero: A)(f: (A, A) => A) {
   private val N = {
     val a = Integer.highestOneBit(n)
     if (a == n) a else a << 1
@@ -15,7 +20,7 @@ class SegmentTree(n: Int, zero: A)(f: (A, A) => A) {
     Array.ofDim(2 * N)
   }
 
-  def update(i: Int, a: Int): Unit = {
+  def update(i: Int, a: A): Unit = {
     assert(i < n)
     var ix = i + N
     dat(ix) = a
