@@ -16,10 +16,10 @@ class SegmentTreeSpec extends FlatSpec with GeneratorDrivenPropertyChecks with M
           val cum = Array.ofDim[Long](n + 1)
           rep(n)(i => cum(i + 1) = cum(i) + v(i))
 
-          def sum(l: Int, r: Int) = cum(r) - cum(l)
+          def sum(l: Int, r: Int) = cum(r + 1) - cum(l)
 
           rep(n) { l =>
-            l + 1 to n foreach { r =>
+            l + 1 until n foreach { r =>
               withClue(s"query($l, $r): "){t.query(l, r) should be(sum(l, r))}
             }
           }

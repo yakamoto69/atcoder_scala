@@ -10,36 +10,38 @@ class SegmentTree(n: Int, zero: A)(f: (A, A) => A) {
     if (a == n) a else a << 1
   }
   private val dat: Array[A] = if (zero != 0){
-    Array.fill(2 * N - 1)(zero)
+    Array.fill(2 * N)(zero)
   } else {
-    Array.ofDim(2 * N - 1)
+    Array.ofDim(2 * N)
   }
 
   def update(i: Int, a: Int): Unit = {
-    var k = N - 1 + i
-    dat(k) = a
-    while(k > 0) {
-      k = (k - 1) / 2
-      dat(k) = f(dat(2 * k + 1), dat(2 * k + 2))
+    assert(i < n)
+    var ix = i + N
+    dat(ix) = a
+    while(ix > 1) {
+      dat(ix >> 1) = f(dat(ix), dat(ix ^ 1))
+      ix >>= 1
     }
   }
 
   /**
-    * [a, b)
+    * [a, b]
     */
   def query(a: Int, b: Int): A = {
-    def step(k: Int, l: Int, r: Int): A = {
-      if (r <= a || b <= l) {
-        zero
-      } else if (a <= l && r <= b) {
-        dat(k)
-      } else {
-        val vl = step(k * 2 + 1, l, (l + r) / 2)
-        val vr = step(k * 2 + 2, (l + r) / 2, r)
-        f(vl, vr)
-      }
+    assert(a <= n && b <= n)
+
+    var res: A = zero
+    var left = a + N
+    var right = b + N
+
+    while(left <= right) {
+      if ((left & 1) == 1) res = f(res, dat(left))
+      if ((right & 1) == 0) res = f(res, dat(right))
+      left = (left + 1) >> 1 // 右の子供なら右の親に移動
+      right = (right - 1) >> 1 // 左の子供なら左の親に移動
     }
 
-    step(0, 0, N)
+    res
   }
 }
