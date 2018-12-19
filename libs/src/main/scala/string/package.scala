@@ -9,32 +9,30 @@ package object string {
   class KMP(word: String) {
     val kmp: Array[Int] = Array.ofDim[Int](word.length + 1)
     2 to word.length foreach { i =>
-      var j = kmp(i - 1)
-      var continues = true
-      while(continues) {
-        if (word(j) == word(i - 1)) {
-          j += 1
-          continues = false
-        } else if (j == 0) continues = false
-        else j = kmp(j)
-      }
-      kmp(i) = j
+      // kmp(i-1)以下しか参照されないからOK
+      kmp(i) = longestSuffix(kmp(i - 1), word(i - 1))
     }
 
     def findFirst(text: String): Int = {
       var j = 0
       REP(text.length) { i =>
-        var continues = true
-        while(continues) {
-          if (word(j) == text(i)) {
-            j += 1
-            continues = false
-          } else if (j == 0) continues = false
-          else j = kmp(j)
-        }
+        j = longestSuffix(j, text(i))
         if (j == word.length) return i - word.length + 1
       }
       -1
+    }
+
+    def longestSuffix(matched: Int, c: Char): Int = {
+      var j = matched
+      var continues = true
+      while(continues) {
+        if (word(j) == c) {
+          j += 1
+          continues = false
+        } else if (j == 0) continues = false
+        else j = kmp(j)
+      }
+      j
     }
   }
 
