@@ -162,19 +162,19 @@ package object integer {
   }
 
   /**
-    * *注意* IntをLongにして使わないこと
+    * *注意* 10^12以上ぐらいからは使わないこと
     */
-  def factorize(n: Int): mutable.Map[Int, Int] = {
+  def factorize(n: A): mutable.Map[A, A] = {
     import scala.collection.mutable
-    val res = mutable.Map[Int, Int]() withDefaultValue 0
+    val res = mutable.Map[A, A]() withDefaultValue 0
 
-    def minFactor(n0: Int, rt: Int, i: Int): Int = {
+    def minFactor(n0: A, rt: Int, i: Int): A = {
       if (i > rt) n0 // √n まで見つからなかったら n0は素数か1
       else if (n0 % i == 0) i
       else minFactor(n0, rt, i + 1)
     }
 
-    def step(n0: Int): Unit = {
+    def step(n0: A): Unit = {
       minFactor(n0, math.sqrt(n0).toInt, 2) match {
         case 1 =>
         case f =>

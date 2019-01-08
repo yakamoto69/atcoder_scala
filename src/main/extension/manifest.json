@@ -6,7 +6,7 @@
 
   "content_scripts": [
     {
-      "matches": ["https://beta.atcoder.jp/*"],
+      "matches": ["https://atcoder.jp/*"],
       "js": [
         "jquery-3.3.1.min.js",
         "atcoder.js"

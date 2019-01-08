@@ -99,16 +99,19 @@ package object templates {
   /**
     * nCk を全羅列する方法
     */
-  def next_comb_bit(n: Int, k: Int) {
-    var flag = pow2(n) - 1
-    while(flag < pow2(n)) {
-      val x = flag & -flag // 一番右の1
-      val y = flag + x // 連続した1を0に、１個上のビットを1にする
-      val z = flag & ~y // 連続した1部分
-      flag = (z / x >> 1) | y // 連続した1を一つ減らして一番右に移動 + y
+  def next_comb_bit(n: Int, k: Int)(f: Int => Unit) {
+    if (k == 0) f(0)
+    else {
+      var flag = (1 << k) - 1
+      while (flag < (1 << n)) {
+        f(flag)
+        val x = flag & -flag // 一番右の1
+        val y = flag + x // 連続した1を0に、１個上のビットを1にする
+        val z = flag & ~y // 連続した1部分
+        flag = (z / x >> 1) | y // 連続した1を一つ減らして一番右に移動 + y
+      }
     }
   }
-
   /**
     * 全ノードの組みのパスのsumをパスの長さが偶奇のもので分けて数える
     */

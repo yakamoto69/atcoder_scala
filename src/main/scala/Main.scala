@@ -23,6 +23,23 @@ class Main {
     val N = ni()
   }
 
+
+  def debug(as: Array[Boolean]): Unit = {
+    System.err.println(as.map(x => if(x) "1" else "0").mkString)
+  }
+
+  def debug(as: Array[Int]): Unit = {
+    System.err.println(as.mkString(" "))
+  }
+
+  def debug(as: Array[Long]): Unit = {
+    System.err.println(as.mkString(" "))
+  }
+
+  def debug(s: String): Unit = {
+    System.err.println(s)
+  }
+
   class InputReader(val stream: InputStream) {
     private val reader = new BufferedReader(new InputStreamReader(stream), 32768)
     private var tokenizer: StringTokenizer = _
