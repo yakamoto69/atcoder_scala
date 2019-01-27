@@ -21,7 +21,7 @@ class SegmentTreeSpec extends FlatSpec with GeneratorDrivenPropertyChecks with M
 
           REP(n) { l =>
             l + 1 until n foreach { r =>
-              withClue(s"query($l, $r): "){t.query(l, r) should be(sum(l, r))}
+              withClue(s"query($l, ${r+1}): "){t.query(l, r + 1) should be(sum(l, r))}
             }
           }
         }

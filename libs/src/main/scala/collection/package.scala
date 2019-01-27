@@ -96,7 +96,7 @@ package object collection {
       a(i) = a(j)
       a(j) = tmp
     }
-    Sorting.quickSort(a)
+    Sorting.stableSort(a)
     a
   }
 }

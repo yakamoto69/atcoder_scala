@@ -31,14 +31,14 @@ class SegmentTree[A: ClassTag](n: Int, zero: A)(f: (A, A) => A) {
   }
 
   /**
-    * [a, b]
+    * [a, b)
     */
   def query(a: Int, b: Int): A = {
-    assert(a <= n && b <= n)
+    assert(a < n && b <= n)
 
     var res: A = zero
     var left = a + N
-    var right = b + N
+    var right = b - 1 + N
 
     while(left <= right) {
       if ((left & 1) == 1) res = f(res, dat(left))

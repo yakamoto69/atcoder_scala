@@ -123,7 +123,8 @@ package object integer {
     val res = Array.ofDim[Int](pre.length + post.length)
     REP(pre.length)(i => res(i) = pre(i))
     val preLen = pre.length
-    REP_r(post.length)(i => res(i + preLen) = post(i))
+    val postLen = post.length
+    REP(postLen)(i => res(i + preLen) = post(postLen - 1 - i))
     res
   }
 

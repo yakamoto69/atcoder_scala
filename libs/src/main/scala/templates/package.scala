@@ -13,7 +13,8 @@ package object templates {
     */
 
   /**
-    * [l, r)に含まれるx(i)のiの範囲を返す
+    * [l, r)に含まれるX(L)の下限, 最大のX(R)の上限を探す
+    * l <= X(L), X(R) < r なので、LはlowerBoundで、Rは-1してupperBoundしてさらに-1
     * r - l < 0 の場合はそんな範囲はみつからなかったってこと
     * @param x ソート済み
     */

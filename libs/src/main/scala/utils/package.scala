@@ -71,4 +71,35 @@ package object utils {
 
     step(-1, a.length)
   }
+
+  /**
+    * N個のAで分けられたN+1個の段を作る
+    * ボーダーが A < x, x <= A だったらCeilを使う
+    *
+    * 3             ○---●
+    * 2         ○---●
+    * 1     ○---●
+    * 0 ○---●
+    *      A0  A1  A2
+    */
+  class CeilFn(A: Array[A]) {
+    def apply(x: A): Int = {
+      lowerBound(A, x)
+    }
+  }
+
+  /**
+    * ボーダーが A <= x, x < A だったらFloorを使う
+    *
+    * 3             ●---○
+    * 2         ●---○
+    * 1     ●---○
+    * 0 ●---○
+    *      A0  A1  A2
+    */
+  class FloorFn(A: Array[A]) {
+    def apply(x: A): Int = {
+      upperBound(A, x)
+    }
+  }
 }

@@ -39,14 +39,14 @@ package object seq {
 
   def mul(a1: Array[Array[Int]], a2: Array[Array[Int]], mod: Int): Array[Array[Int]] = {
     assert(a1(0).length == a2.length)
-    val c = a1.length
-    val r = a2(0).length
+    val r = a1.length
+    val c = a2(0).length
     val len = a1(0).length
     val res = Array.ofDim[Int](r, c)
     REP(r) { i =>
       REP(c) { j =>
         REP(len) { k =>
-          res(i)(j) = ((res(i)(j) + a1(j)(k).toLong * a2(k)(i)) % mod).toInt
+          res(i)(j) = ((res(i)(j) + a1(i)(k).toLong * a2(k)(j)) % mod).toInt
         }
       }
     }
