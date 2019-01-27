@@ -40,6 +40,10 @@ class Main {
     System.err.println(s)
   }
 
+  def debug(num: Long): Unit = {
+    System.err.println(num)
+  }
+
   class InputReader(val stream: InputStream) {
     private val reader = new BufferedReader(new InputStreamReader(stream), 32768)
     private var tokenizer: StringTokenizer = _

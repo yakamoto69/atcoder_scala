@@ -88,7 +88,7 @@ package object collection {
     x(0)
   }
 
-  def sort(a: Array[Long]): Array[Long] = {
+  def sort(a: Array[Int]): Array[Int] = {
     val n = a.length
     REP(n) { i =>
       val j = scala.util.Random.nextInt(n - i) + i
