@@ -4,6 +4,33 @@ import scala.reflect.ClassTag
 import io.InputReader
 
 package object lang {
+
+  private val oj = System.getenv("ATCODER_DEBUG") == null
+
+  def DEBUG(f: => Unit): Unit = {
+    if (!oj){ f }
+  }
+
+  def debug(as: Array[Boolean]): Unit = DEBUG {
+    debug(as.map(x => if(x) "1" else "0").mkString)
+  }
+
+  def debug(as: Array[Int]): Unit = DEBUG {
+    debug(as.mkString(" "))
+  }
+
+  def debug(as: Array[Long]): Unit = DEBUG {
+    debug(as.mkString(" "))
+  }
+
+  def debug(s: => String): Unit = DEBUG {
+    System.err.println(s)
+  }
+
+  def debugNum(num: => Long): Unit = DEBUG {
+    System.err.println(num)
+  }
+
   val sc = new InputReader(System.in)
   def ni(): Int = sc.nextInt()
   def nl(): Long = sc.nextLong()
@@ -53,7 +80,7 @@ package object lang {
   }
 
   def cumSum(as: Array[Int]) = {
-    val cum = Array.ofDim[Int](as.length + 1)
+    val cum = Array.ofDim[Long](as.length + 1)
     REP(as.length) { i =>
       cum(i + 1) = cum(i) + as(i)
     }

@@ -47,7 +47,7 @@ package object integer {
     */
   val pow10 = Array.ofDim[Long](19)
   pow10(0) = 1
-  REP(18)(i => pow10(i + 1) = pow10(i) * 10)
+  REP(pow10.length - 1)(i => pow10(i + 1) = pow10(i) * 10)
 
   val pow2 = Array.ofDim[Long](32)
   pow2(0) = 1

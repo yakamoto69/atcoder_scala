@@ -23,24 +23,29 @@ class Main {
     val N = ni()
   }
 
+  private val oj = System.getenv("ATCODER_DEBUG") == null
 
-  def debug(as: Array[Boolean]): Unit = {
-    System.err.println(as.map(x => if(x) "1" else "0").mkString)
+  def DEBUG(f: => Unit): Unit = {
+    if (!oj){ f }
   }
 
-  def debug(as: Array[Int]): Unit = {
-    System.err.println(as.mkString(" "))
+  def debug(as: Array[Boolean]): Unit = DEBUG {
+    debug(as.map(x => if(x) "1" else "0").mkString)
   }
 
-  def debug(as: Array[Long]): Unit = {
-    System.err.println(as.mkString(" "))
+  def debug(as: Array[Int]): Unit = DEBUG {
+    debug(as.mkString(" "))
   }
 
-  def debug(s: String): Unit = {
+  def debug(as: Array[Long]): Unit = DEBUG {
+    debug(as.mkString(" "))
+  }
+
+  def debug(s: => String): Unit = DEBUG {
     System.err.println(s)
   }
 
-  def debug(num: Long): Unit = {
+  def debugNum(num: => Long): Unit = DEBUG {
     System.err.println(num)
   }
 
