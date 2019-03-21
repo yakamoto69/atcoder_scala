@@ -9,6 +9,7 @@ object Main {
 class Main {
   import java.io._
   import java.util.StringTokenizer
+  import java.util.Arrays
 
   import scala.collection.mutable
   import scala.util.Sorting
@@ -45,7 +46,7 @@ class Main {
     System.err.println(s)
   }
 
-  def debugNum(num: => Long): Unit = DEBUG {
+  def debugL(num: => Long): Unit = DEBUG {
     System.err.println(num)
   }
 
@@ -97,6 +98,11 @@ class Main {
   def REP_r(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
     var i = n - 1 + offset
     while(i >= offset) { f(i); i -= 1 }
+  }
+  def TO(from: Int, to: Int)(f: Int => Unit): Unit = {
+    REP(to - from + 1, from) { i =>
+      f(i)
+    }
   }
 
   def map[@specialized A: ClassTag](n: Int, offset: Int = 0)(f: Int => A): Array[A] = {
