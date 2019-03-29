@@ -66,6 +66,11 @@ package object lang {
     var i = n - 1 + offset
     while(i >= offset) { f(i); i -= 1 }
   }
+  def TO(from: Int, to: Int)(f: Int => Unit): Unit = {
+    REP(to - from + 1, from) { i =>
+      f(i)
+    }
+  }
 
   def map[@specialized A: ClassTag](n: Int, offset: Int = 0)(f: Int => A): Array[A] = {
     val res = Array.ofDim[A](n)
