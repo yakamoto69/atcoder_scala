@@ -9,12 +9,11 @@ object Main {
 class Main {
   import java.io._
   import java.util.StringTokenizer
-  import java.util.Arrays
+  import java.util.Arrays.sort
 
   import scala.collection.mutable
-  import scala.util.Sorting
   import math.{abs, max, min}
-  import mutable.{ArrayBuffer, ListBuffer}
+  import mutable.ArrayBuffer
   import scala.reflect.ClassTag
 
   val MOD = 1000000007
@@ -118,7 +117,7 @@ class Main {
     s
   }
 
-  def cumSum(as: Array[Int]) = {
+  def cumSum(as: Array[Long]) = {
     val cum = Array.ofDim[Long](as.length + 1)
     REP(as.length) { i =>
       cum(i + 1) = cum(i) + as(i)
