@@ -26,7 +26,7 @@ package object string {
       var j = matched
       var continues = true
       while(continues) {
-        if (word(j) == c) {
+        if (j < word.length && word(j) == c) {
           j += 1
           continues = false
         } else if (j == 0) continues = false

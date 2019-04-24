@@ -39,6 +39,17 @@ package object collection {
     }
   }
 
+  /**
+    * ２次元配列(i, j)のjを固定してiでreduceする
+    */
+  def reduceDimFlip(as: Array[Array[Long]], j: Int, len: Int)(f: (Long, Long) => Long): Long = {
+    var res = as(0)(j)
+    REP(len - 1, 1) { i =>
+      res = f(res, as(i)(j))
+    }
+    res
+  }
+
   def radixSort[A: ClassTag](as: Array[A])(f: A => Int): Array[A] = {
     val n = as.length
     val xs = Array(as, new Array[A](n))

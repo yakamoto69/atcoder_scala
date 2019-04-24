@@ -41,6 +41,22 @@ class Main {
     debug(as.mkString(" "))
   }
 
+  def debugDim(m: Array[Array[Long]]): Unit = DEBUG {
+    REP(m.length) { i =>
+      debug(m(i))
+    }
+  }
+
+  def debugDimFlip(m: Array[Array[Long]]): Unit = DEBUG {
+    REP(m(0).length) { j =>
+      REP(m.length) { i =>
+        System.err.print(m(i)(j))
+        System.err.print(" ")
+      }
+      System.err.println()
+    }
+  }
+
   def debug(s: => String): Unit = DEBUG {
     System.err.println(s)
   }
@@ -117,7 +133,7 @@ class Main {
     s
   }
 
-  def cumSum(as: Array[Long]) = {
+  def cumSum(as: Array[Int]) = {
     val cum = Array.ofDim[Long](as.length + 1)
     REP(as.length) { i =>
       cum(i + 1) = cum(i) + as(i)
