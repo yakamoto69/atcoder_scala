@@ -100,7 +100,7 @@ package object lang {
     s
   }
 
-  def cumSum(as: Array[Int]) = {
+  def cumSum(as: Array[Int]): Array[Long] = {
     val cum = Array.ofDim[Long](as.length + 1)
     REP(as.length) { i =>
       cum(i + 1) = cum(i) + as(i)

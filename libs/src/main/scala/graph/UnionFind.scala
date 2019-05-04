@@ -24,19 +24,21 @@ class UnionFind(val n: Int) {
     res
   }
 
+  private def merge(node: Int, rt: Int): Int = {
+    par(node) = rt
+    rank(rt) += rank(node)
+    rt
+  }
+
   def unite(x: Int, y: Int): Int = {
     val x1 = find(x)
     val y1 = find(y)
     if (x1 == y1) x1
     else {
-      if (rank(x1) < rank(y)) {
-        par(x1) = y1
-        y1
-      } else {
-        par(y1) = x1
-        if (rank(x1) == rank(y1)) rank(x1) += rank(y1)
-        x1
-      }
+      if (rank(x1) < rank(y1))
+        merge(x1, y1)
+      else
+        merge(y1, x1)
     }
   }
 
