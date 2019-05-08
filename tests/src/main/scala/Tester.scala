@@ -38,17 +38,20 @@ object Tester {
 
   def main(args: Array[String]): Unit = {
     val okAll = readTestCases(args(0)).zipWithIndex forall { case (test, i) =>
+      import java.io.PrintWriter
+
+      import Main.InputReader
       println(s"Test${i+1}")
 
       val out = new ByteArrayOutputStream()
-      System.setIn(new ByteArrayInputStream(test.in.getBytes("utf-8")))
-      System.setOut(new PrintStream(out))
+      val in = new ByteArrayInputStream(test.in.getBytes("utf-8"))
+      val pw = new PrintWriter(out)
 
       val s = System.nanoTime()
 
-      val solver = new Main()
+      val solver = new Main(pw, new InputReader(in))
       solver.solve()
-      solver.out.flush()
+      pw.flush()
 
       val e = System.nanoTime()
 

@@ -1,35 +1,22 @@
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
-import io.InputReader
 
 package object lang {
 
   private val oj = System.getenv("ATCODER_DEBUG") == null
-
   def DEBUG(f: => Unit): Unit = {
     if (!oj){ f }
   }
-
-  def debug(as: Array[Boolean]): Unit = DEBUG {
-    debug(as.map(x => if(x) "1" else "0").mkString)
-  }
-
-  def debug(as: Array[Int]): Unit = DEBUG {
-    debug(as.mkString(" "))
-  }
-
-  def debug(as: Array[Long]): Unit = DEBUG {
-    debug(as.mkString(" "))
-  }
-
-  def debugDim(m: Array[Array[Long]]): Unit = DEBUG {
+  def debug(as: Array[Boolean]): Unit = if (!oj){ debug(as.map(x => if(x) "1" else "0").mkString) }
+  def debug(as: Array[Int]): Unit = if (!oj){ debug(as.mkString(" ")) }
+  def debug(as: Array[Long]): Unit =if (!oj){ debug(as.mkString(" ")) }
+  def debugDim(m: Array[Array[Long]]): Unit = if (!oj){
     REP(m.length) { i =>
       debug(m(i))
     }
   }
-
-  def debugDimFlip(m: Array[Array[Long]]): Unit = DEBUG {
+  def debugDimFlip(m: Array[Array[Long]]): Unit = if (!oj){
     REP(m(0).length) { j =>
       REP(m.length) { i =>
         System.err.print(m(i)(j))
@@ -38,41 +25,13 @@ package object lang {
       System.err.println()
     }
   }
-
   def debug(s: => String): Unit = DEBUG {
     System.err.println(s)
   }
-
-  def debugNum(num: => Long): Unit = DEBUG {
+  def debugL(num: => Long): Unit = DEBUG {
     System.err.println(num)
   }
 
-  val sc = new InputReader(System.in)
-  def ni(): Int = sc.nextInt()
-  def nl(): Long = sc.nextLong()
-  def nc(): Char = sc.nextChar()
-  def ns(): String = sc.next()
-  def ns(n: Int): Array[Char] = ns().toCharArray
-  def na(n: Int): Array[Int] = map(n)(_ => ni())
-  def na2(n: Int, offset: Int = 0): (Array[Int], Array[Int]) = {
-    val A1, A2 = Array.ofDim[Int](n)
-    REP(n) { i =>
-      A1(i) = ni() + offset
-      A2(i) = ni() + offset
-    }
-    (A1, A2)
-  }
-  def nm(n: Int, m: Int): Array[Array[Int]] = {
-    val A = Array.ofDim[Int](n, m)
-    REP(n) { i =>
-      REP(m) { j =>
-        A(i)(j) = ni()
-      }
-    }
-    A
-  }
-  def nal(n: Int): Array[Long] = map(n)(_ => nl())
-  def nm_c(n: Int, m: Int): Array[Array[Char]] = map(n) (_ => ns(m))
   def REP(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
     var i = offset
     val N = n + offset
@@ -87,7 +46,6 @@ package object lang {
       f(i)
     }
   }
-
   def map[@specialized A: ClassTag](n: Int, offset: Int = 0)(f: Int => A): Array[A] = {
     val res = Array.ofDim[A](n)
     REP(n)(i => res(i) = f(i + offset))
@@ -99,7 +57,6 @@ package object lang {
     REP(as.length)(i => s += as(i))
     s
   }
-
   def cumSum(as: Array[Int]): Array[Long] = {
     val cum = Array.ofDim[Long](as.length + 1)
     REP(as.length) { i =>

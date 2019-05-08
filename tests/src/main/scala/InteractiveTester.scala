@@ -1,12 +1,14 @@
 import java.io._
-import java.util.StringTokenizer
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.reflect.ClassTag
 import scala.util.{Failure, Success, Try}
 
+import lang._
+
 object InteractiveTester {
+
+  import scala.util.Random
 
   val solverIn = new PipedInputStream()
   val testerOut = new PipedOutputStream()
@@ -15,9 +17,8 @@ object InteractiveTester {
   val testerIn = new PipedInputStream()
   testerIn.connect(solverOut)
   val out = new PrintWriter(testerOut, true)
-  val sc = new InputReader(testerIn)
-  System.setIn(solverIn)
-  System.setOut(new PrintStream(solverOut))
+  val sc = new io.InputReader(testerIn)
+  import sc._
 
   def main(args: Array[String]): Unit = {
     val okAll = dataSet.forall { dat =>
@@ -31,13 +32,13 @@ object InteractiveTester {
       val e = System.nanoTime()
       def show2(answer: Answer, success: Boolean) = {
         _show(success)
-        System.err.println(s"data: $dat, answer: $answer")
+        debug(s"data: $dat, answer: $answer")
         success
       }
 
       def show(success: Boolean): Boolean = {
         _show(success)
-        System.err.println(s"data: $dat")
+        debug(s"data: $dat")
         success
       }
 
@@ -61,133 +62,70 @@ object InteractiveTester {
   }
 
   // こっから下を適時変えてね
-  type Query = (Char, Int)
-  type Data = Seq[Int]
-  type Answer = Int
+  case class Data(x: Int, m: Int, p: String)
+  case class Answer(y: Int)
   val MAX_QUERY = 60
 
-  def dataSet: Seq[Data] = Seq(
-    Seq(1,2,1,2,3,4,3,2),
-    Seq(1,2,3,2,1,0)
-  )
+  def dataSet: Seq[Data] = {
+    val rand = map(10){ _ =>
+      val m = Random.nextInt(1000000000) + 1
+      val n = Random.nextInt(30) + 1
+      val p = map(n){ _ => if (Random.nextBoolean()) '1' else '0' }.mkString
+      Data(Random.nextInt(m) + 1, m, p)
+    }
+
+    Seq(
+      Data(3, 3, "0000000"),
+      Data(3, 5, "10"),
+      Data(24, 50, "0000000"),
+      Data(24, 50, "011100101"),
+      Data(1, 1000000000, "001010110010101110101010101011"),
+      Data(32523423, 1000000000, "001010110010101110101010101011"),
+      Data(1000000000, 1000000000, "001010110010101110101010101011")
+    ) ++ rand
+  }
 
   def runSolver() = {
     import ExecutionContext.Implicits.global
     Future {
-      new Main().solve()
+      val pw = new PrintWriter(solverOut)
+      new Main(pw, new Main.InputReader(solverIn)).solve()
     }
   }
 
   def test(dat: Data): Option[Answer] = {
-    out.println(dat.length)
-    REP(MAX_QUERY) { _ =>
-      val (tpe, x) = readQuery(dat)
-      tpe match {
-        case '?' =>
-          out.println(dat(x - 1))
+    val n = dat.p.length
+    out.println(s"${dat.m} $n")
 
-        case '!' =>
-          return Some(x)
-
-        case _ => throw new Exception(s"$tpe $x")
+    var cnt = 0
+    while(true) {
+      if (cnt >= MAX_QUERY) {
+        debug("MAX_QUERY")
+        return None
       }
+      val y = ni()
+      val sig = if (dat.p(cnt %  n) == '1') 1 else -1
+      val ans = Integer.compare(dat.x, y) * sig
+      debug(s"$y $ans cnt=${cnt+1}")
+      out.println(ans)
+      if (ans == 0) return Some(Answer(y))
+//      nc() match {
+//        case '?' =>
+//          if (cnt >= MAX_QUERY) return None
+//          val s = ns()
+//          out.println(applyRule(s, dat.rule))
+//
+//        case '!' =>
+//          val s = ns()
+//          return Some(Answer(s))
+//      }
+      cnt += 1
     }
 
-    // クエリー回数を超えた
-    None
+    None // 到達不可
   }
 
-  def ok(data: Data, x: Int): Boolean = {
-    val n = data.length
-    if (x == -1) {
-      0 until n / 2 forall { i =>
-        data(i) != data((i + n / 2) % n)
-      }
-    } else {
-      val i = x - 1
-      i >= 0 && i < n && {
-        data(i) == data((i + n / 2) % n)
-      }
-    }
-  }
-
-  def readQuery(dat: Data): Query = {
-    val tpe = nc()
-    val x = ni()
-    tpe match {
-      case '?'=> if (x <= 0 || x > dat.length) throw new Exception(s"Out of range: $x")
-      case '!'=> if (!(x == -1 || (x > 0 && x <= dat.length))) throw new Exception(s"Out of range: $x")
-    }
-    (tpe, x)
-  }
-
-
-  class InputReader(val stream: InputStream) {
-    private val reader = new BufferedReader(new InputStreamReader(stream), 32768)
-    private var tokenizer: StringTokenizer = _
-
-    def next(): String = {
-      while (tokenizer == null || !tokenizer.hasMoreTokens)
-        tokenizer = new StringTokenizer(reader.readLine)
-      tokenizer.nextToken
-    }
-
-    def nextInt(): Int = next().toInt
-    def nextLong(): Long = next().toLong
-    def nextChar(): Char = next().charAt(0)
-  }
-  def ni(): Int = sc.nextInt()
-  def nl(): Long = sc.nextLong()
-  def nc(): Char = sc.nextChar()
-  def ns(): String = sc.next()
-  def ns(n: Int): Array[Char] = ns().toCharArray
-  def na(n: Int): Array[Int] = map(n)(_ => ni())
-  def na2(n: Int, offset: Int = 0): (Array[Int], Array[Int]) = {
-    val A1, A2 = Array.ofDim[Int](n)
-    REP(n) { i =>
-      A1(i) = ni() + offset
-      A2(i) = ni() + offset
-    }
-    (A1, A2)
-  }
-  def nm(n: Int, m: Int): Array[Array[Int]] = {
-    val A = Array.ofDim[Int](n, m)
-    REP(n) { i =>
-      REP(m) { j =>
-        A(i)(j) = ni()
-      }
-    }
-    A
-  }
-  def nal(n: Int): Array[Long] = map(n)(_ => nl())
-  def nm_c(n: Int, m: Int): Array[Array[Char]] = map(n) (_ => ns(m))
-  def REP(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
-    var i = offset
-    val N = n + offset
-    while(i < N) { f(i); i += 1 }
-  }
-  def REP_r(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
-    var i = n - 1 + offset
-    while(i >= offset) { f(i); i -= 1 }
-  }
-
-  def map[@specialized A: ClassTag](n: Int)(f: Int => A): Array[A] = {
-    val res = Array.ofDim[A](n)
-    REP(n)(i => res(i) = f(i))
-    res
-  }
-
-  def sumL(as: Array[Int]): Long = {
-    var s = 0L
-    REP(as.length)(i => s += as(i))
-    s
-  }
-
-  def cumSum(as: Array[Int]) = {
-    val cum = Array.ofDim[Int](as.length + 1)
-    REP(as.length) { i =>
-      cum(i + 1) = cum(i) + as(i)
-    }
-    cum
+  def ok(data: Data, ans: Answer): Boolean = {
+    data.x == ans.y
   }
 }
