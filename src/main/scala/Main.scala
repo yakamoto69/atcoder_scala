@@ -125,7 +125,7 @@ class Main(out: java.io.PrintWriter, sc: Main.InputReader) {
   @inline private def MOD = 1000000007
 
   def solve(): Unit = {
-    val N = ni() % MOD
-    this.out.println(N)
+    val N = ni()
+    out.println(N)
   }
 }
