@@ -40,6 +40,32 @@ class BITSpec extends FlatSpec with GeneratorDrivenPropertyChecks with Matchers 
     }
   }
 
+  "BIT.lowerBound" should "find min position" in {
+    forAll(genSteps(50, 100, positive = true)) { case (n, steps) =>
+      val t = new BIT(n)
+      val v = Array.ofDim[Long](n)
+
+      def test(): Unit = {
+        val cum = Array.ofDim[Long](n + 1)
+        REP(n)(i => cum(i + 1) = cum(i) + v(i))
+
+        REP(n) { i =>
+          if (cum(i+1) > 0) {
+            withClue(s"find(cum($i+1): [${cum.mkString(" ")}]") {
+              t.lowerBound(cum(i + 1))(_ - _, _ < _) should be(cum.indexWhere(_ >= cum(i+1)) - 1)
+            }
+          }
+        }
+      }
+
+      steps foreach { case Step(i, num) =>
+        t.add(i, num)
+        v(i) += num
+        test()
+      }
+    }
+  }
+
   // countLtやれば他のcountも大丈夫だろう
   "ZippedCounter" should "countLt" in {
     forAll(Gen.listOf(Arbitrary.arbLong.arbitrary)) { points =>

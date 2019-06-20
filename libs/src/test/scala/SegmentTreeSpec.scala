@@ -40,14 +40,14 @@ class SegmentTreeSpec extends FlatSpec with GeneratorDrivenPropertyChecks with M
 object SegmentTreeSpec {
   case class Step(i: Int, num: Int)
 
-  def genStep(n: Int) = for {
+  def genStep(n: Int, positive: Boolean) = for {
     i <- Gen.choose(0, n - 1)
-    v <- Arbitrary.arbInt.arbitrary
+    v <- if (positive) Gen.posNum[Int] else Arbitrary.arbInt.arbitrary
   } yield Step(i, v)
 
-  def genSteps(maxN: Int, maxCnt: Int) = for {
+  def genSteps(maxN: Int, maxCnt: Int, positive: Boolean = false) = for {
     n <- genNum(maxN) //　別にnがでかいテストに意味がない。全範囲のテストが高いのでnを小さくする
     cnt <- genNum(maxCnt)
-    steps <- Gen.listOfN(cnt, genStep(n))
+    steps <- Gen.listOfN(cnt, genStep(n, positive))
   } yield (n, steps)
 }

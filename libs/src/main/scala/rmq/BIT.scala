@@ -47,6 +47,20 @@ class BIT(n: Int, zero: A)(f: (A, A) => A) {
     assert(r > l)
     sub(sum(r), sum(l))
   }
+
+  def lowerBound(W: A)(sub: (A, A) => A, lt: (A, A) => Boolean): Int = {
+    var k = N
+    var x = 0
+    var w = W
+    while(k > 0) {
+      if (x + k <= N && lt(bit(x + k), w)) {
+        w = sub(w, bit(x + k))
+        x += k
+      }
+      k /= 2
+    }
+    x
+  }
 }
 
 object BIT {
