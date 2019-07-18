@@ -107,7 +107,7 @@ package object collection {
       a(i) = a(j)
       a(j) = tmp
     }
-    Sorting.stableSort(a)
+    java.util.Arrays.sort(a)
     a
   }
 }

@@ -15,6 +15,8 @@ package object mat {
   }
 
   def mul(a1: Array[Array[Long]], a2: Array[Array[Long]], mod: Int): Array[Array[Long]] = {
+    val MAX = 7e18.toLong
+
     assert(a1(0).length == a2.length)
     val r = a1.length
     val c = a2(0).length
@@ -25,7 +27,7 @@ package object mat {
         var v = 0L
         REP(len) { k =>
           v += + a1(i)(k) * a2(k)(j)
-          if (v > 7e18.toInt) v %= mod
+          if (v > MAX) v %= mod
         }
         res(i)(j) = if (v >= mod) v % mod else v
       }
