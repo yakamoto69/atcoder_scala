@@ -8,6 +8,7 @@ import scala.collection.mutable.ArrayBuffer
 import rmq.BIT
 import rmq.BIT.ZippedCounter
 import SegmentTreeSpec._
+import utils._
 
 class BITSpec extends FlatSpec with GeneratorDrivenPropertyChecks with Matchers {
   "BIT" should "accumulate every segment" in {
@@ -27,7 +28,7 @@ class BITSpec extends FlatSpec with GeneratorDrivenPropertyChecks with Matchers 
 
         REP(n) { l =>
           val r = l + genNum(n - l).sample.get
-          withClue(s"query($l, $r): "){t.query(l, r)(_ - _) should be(cum(r) - cum(l))}
+          withClue(s"query($l, $r): "){t.query(l, r) should be(cum(r) - cum(l))}
         }
       }
 
@@ -40,22 +41,37 @@ class BITSpec extends FlatSpec with GeneratorDrivenPropertyChecks with Matchers 
     }
   }
 
-  "BIT.lowerBound" should "find min position" in {
+  "BIT.lowerBound" should "find min position which holds sum(i) >= x" in {
     forAll(genSteps(50, 100, positive = true)) { case (n, steps) =>
       val t = new BIT(n)
       val v = Array.ofDim[Long](n)
 
       def test(): Unit = {
-        val cum = Array.ofDim[Long](n + 1)
-        REP(n)(i => cum(i + 1) = cum(i) + v(i))
+        import scala.util.Random
+        val cum = Array.ofDim[Long](n)
+        cum(0) = v(0)
+        REP(n - 1)(i => cum(i + 1) = cum(i) + v(i + 1))
 
-        REP(n) { i =>
-          if (cum(i+1) > 0) {
-            withClue(s"find(cum($i+1): [${cum.mkString(" ")}]") {
-              t.lowerBound(cum(i + 1))(_ - _, _ < _) should be(cum.indexWhere(_ >= cum(i+1)) - 1)
-            }
+        def testX(x: A): Unit = {
+          withClue(s"find($x): [${cum.mkString(" ")}]") {
+            t.lowerBound(x) should be(lowerBound(cum, x))
           }
         }
+
+        // 全点調べる
+        REP(n) { i =>
+          testX(cum(i))
+        }
+
+        // ランダムで
+        REP(n) { _ =>
+          val x = if (cum(n - 1) > Integer.MAX_VALUE) Random.nextLong() else Random.nextInt(cum(n - 1).toInt)
+          testX(x)
+        }
+
+        // 極端な値で
+        testX(Long.MinValue)
+        testX(Long.MaxValue)
       }
 
       steps foreach { case Step(i, num) =>

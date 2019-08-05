@@ -18,7 +18,7 @@ class BIT(n: Int, zero: A)(f: (A, A) => A) {
   def sum(i: Int): A = {
     assert(i <= n)
     var x = i
-    var s: A = 0
+    var s: A = zero
     while(x > 0) {
       s = f(s, bit(x))
       x -= x & -x
@@ -40,15 +40,19 @@ class BIT(n: Int, zero: A)(f: (A, A) => A) {
 
   def sumAll: A = sum(n)
 
+  // A がLongとかじゃない場合はこれらを実装しないと下の奴らが使えない
+  private def sub(a: A, b: A) = a - b
+  private def lt(a: A, b: A) = a < b
+
   /**
     * [l, r)
     */
-  def query(l: Int, r: Int)(sub: (A, A) => A): A = {
+  def query(l: Int, r: Int): A = {
     assert(r > l)
     sub(sum(r), sum(l))
   }
 
-  def lowerBound(W: A)(sub: (A, A) => A, lt: (A, A) => Boolean): Int = {
+  def lowerBound(W: A): Int = {
     var k = N
     var x = 0
     var w = W
@@ -59,7 +63,7 @@ class BIT(n: Int, zero: A)(f: (A, A) => A) {
       }
       k /= 2
     }
-    x
+    math.min(n, x)
   }
 }
 
