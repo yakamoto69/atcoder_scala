@@ -9,19 +9,19 @@ object Main {
     out.flush()
   }
 
-  private val oj = System.getenv("ATCODER_DEBUG") == null
-  def DEBUG(f: => Unit): Unit = {
+  private[this] val oj = System.getenv("ATCODER_DEBUG") == null
+  @inline private final def DEBUG(f: => Unit): Unit = {
     if (!oj){ f }
   }
-  def debug(as: Array[Boolean]): Unit = if (!oj){ debug(as.map(x => if(x) "1" else "0").mkString) }
-  def debug(as: Array[Int]): Unit = if (!oj){ debug(as.mkString(" ")) }
-  def debug(as: Array[Long]): Unit =if (!oj){ debug(as.mkString(" ")) }
-  def debugDim(m: Array[Array[Long]]): Unit = if (!oj){
+  @inline private final def debug(as: Array[Boolean]): Unit = if (!oj){ debug(as.map(x => if(x) "1" else "0").mkString) }
+  @inline private final def debug(as: Array[Int]): Unit = if (!oj){ debug(as.mkString(" ")) }
+  @inline private final def debug(as: Array[Long]): Unit =if (!oj){ debug(as.mkString(" ")) }
+  @inline private final def debugDim(m: Array[Array[Long]]): Unit = if (!oj){
     REP(m.length) { i =>
       debug(m(i))
     }
   }
-  def debugDimFlip(m: Array[Array[Long]]): Unit = if (!oj){
+  @inline private final def debugDimFlip(m: Array[Array[Long]]): Unit = if (!oj){
     REP(m(0).length) { j =>
       REP(m.length) { i =>
         System.err.print(m(i)(j))
@@ -30,18 +30,18 @@ object Main {
       System.err.println()
     }
   }
-  def debug(s: => String): Unit = DEBUG {
+  @inline private final def debug(s: => String): Unit = DEBUG {
     System.err.println(s)
   }
-  def debugL(num: => Long): Unit = DEBUG {
+  @inline private final def debugL(num: => Long): Unit = DEBUG {
     System.err.println(num)
   }
 
   class InputReader(val stream: InputStream) {
-    private val reader = new BufferedReader(new InputStreamReader(stream), 32768)
-    private var tokenizer: StringTokenizer = _
+    private[this] val reader = new BufferedReader(new InputStreamReader(stream), 32768)
+    private[this] var tokenizer: StringTokenizer = _
 
-    def next(): String = {
+    @inline private[this] final def next(): String = {
       while (tokenizer == null || !tokenizer.hasMoreTokens)
         tokenizer = new StringTokenizer(reader.readLine)
       tokenizer.nextToken
@@ -78,19 +78,17 @@ object Main {
     def nm_c(n: Int, m: Int): Array[Array[Char]] = map(n) (_ => ns(m))
   }
 
-  def REP(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
+  @inline private final def REP(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
     var i = offset
     val N = n + offset
     while(i < N) { f(i); i += 1 }
   }
-  def REP_r(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
+  @inline private final def REP_r(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
     var i = n - 1 + offset
     while(i >= offset) { f(i); i -= 1 }
   }
-  def TO(from: Int, to: Int)(f: Int => Unit): Unit = {
-    REP(to - from + 1, from) { i =>
-      f(i)
-    }
+  @inline private final def TO(from: Int, to: Int)(f: Int => Unit): Unit = {
+    REP(to - from + 1, from)(f)
   }
   def map[@specialized A: ClassTag](n: Int, offset: Int = 0)(f: Int => A): Array[A] = {
     val res = Array.ofDim[A](n)
@@ -122,7 +120,7 @@ class Main(out: java.io.PrintWriter, sc: Main.InputReader) {
   import mutable.ArrayBuffer
 
   // toIntとか+7とかするならvalにしろ
-  @inline private def MOD = 1000000007
+  final private[this] val MOD = 1000000007
 
   def solve(): Unit = {
     val N = ni()
