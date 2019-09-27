@@ -4,6 +4,7 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import lang._
 import testlang._
 import rmq.SegmentTree
+import rmq.RangeUpdateTree
 import SegmentTreeSpec._
 
 class SegmentTreeSpec extends FlatSpec with GeneratorDrivenPropertyChecks with Matchers {
@@ -33,6 +34,20 @@ class SegmentTreeSpec extends FlatSpec with GeneratorDrivenPropertyChecks with M
           test()
         }
       }
+    }
+  }
+
+  "RangeUpdateTree" should "update range value and query one value" in {
+    val t = new RangeUpdateTree[Int](10, 0)(_+_)
+    t.add(0, 10, 1)
+    REP(10) { i =>
+      t.query(i) should be (1)
+    }
+    t.add(1, 9, 10)
+    t.query(0) should be (1)
+    t.query(9) should be (1)
+    REP(8, 1) { i =>
+      t.query(i) should be (11)
     }
   }
 }
