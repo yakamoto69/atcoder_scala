@@ -36,6 +36,9 @@ object Main {
   @inline private final def debugL(num: => Long): Unit = DEBUG {
     System.err.println(num)
   }
+  private def isDebug[A](debug: => A, online: => A): A = {
+    if (oj) online else debug
+  }
 
   class InputReader(val stream: InputStream) {
     private[this] val reader = new BufferedReader(new InputStreamReader(stream), 32768)
@@ -78,16 +81,16 @@ object Main {
     def nm_c(n: Int, m: Int): Array[Array[Char]] = map(n) (_ => ns(m))
   }
 
-  @inline private final def REP(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
+  def REP(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
     var i = offset
     val N = n + offset
     while(i < N) { f(i); i += 1 }
   }
-  @inline private final def REP_r(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
+  def REP_r(n: Int, offset: Int = 0)(f: Int => Unit): Unit = {
     var i = n - 1 + offset
     while(i >= offset) { f(i); i -= 1 }
   }
-  @inline private final def TO(from: Int, to: Int)(f: Int => Unit): Unit = {
+  def TO(from: Int, to: Int)(f: Int => Unit): Unit = {
     REP(to - from + 1, from)(f)
   }
   def map[@specialized A: ClassTag](n: Int, offset: Int = 0)(f: Int => A): Array[A] = {
@@ -110,6 +113,10 @@ object Main {
   }
 }
 
+object Workspace {
+  import Main._
+}
+
 class Main(out: java.io.PrintWriter, sc: Main.InputReader) {
   import sc._
   import Main._
@@ -118,6 +125,7 @@ class Main(out: java.io.PrintWriter, sc: Main.InputReader) {
   import scala.collection.mutable
   import math.{abs, max, min}
   import mutable.ArrayBuffer
+  import Workspace._
 
   // toIntとか+7とかするならvalにしろ
   final private[this] val MOD = 1000000007

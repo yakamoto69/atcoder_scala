@@ -118,30 +118,41 @@ package object graph {
     */
   def traceDfs(g: Array[Array[Int]], rt: Int = 0): (Array[Int], Array[Int], Array[Int]) = {
     val n = g.length
-    val stack = mutable.Stack[Int]()
+    val stack = Array.ofDim[Int](n)
+    var s = 0
     val ix = Array.ofDim[Int](n)
-    val tour = Array.ofDim[Int](n)
+    val tour = Array.ofDim[Int](n) // dfsの訪れる順番
+    var p = 0
     val depth = Array.ofDim[Int](n)
     val parent = Array.ofDim[Int](n)
     parent(rt) = -1
-    var p = 0
 
     tour(p) = rt
     p += 1
-    stack.push(rt)
+    stack(s) = rt
+    s += 1
 
-    while(stack.nonEmpty) {
-      val v = stack.top
+    while(s > 0) {
+      val v = stack(s-1)
       val es = g(v)
-      if (ix(v) == es.length) stack.pop()
+
+      if (ix(v) == 0) {
+        // dfsの開始部分
+        depth(v) = if (parent(v) == -1) 0 else depth(parent(v)) + 1
+        tour(p) = v
+        p += 1
+      }
+
+      if (ix(v) == es.length) {
+        // dfsの終了部分
+        s -= 1
+      }
       else {
         val u = es(ix(v))
         if (u != parent(v)) {
           parent(u) = v
-          depth(u) = depth(v) + 1
-          stack.push(u)
-          tour(p) = u
-          p += 1
+          stack(s) = u
+          s += 1
         }
         ix(v) += 1
       }
@@ -155,64 +166,6 @@ package object graph {
     g.indices forall { v =>
       g(v) forall { u =>
         d(v) % 2 != d(u) % 2 // 全エッジの両端の深さの偶奇が異なっている
-      }
-    }
-  }
-
-  /**
-    * Lowest Common Ancestor
-    * @param g packで作ったグラフでおきかえること
-    */
-  def LCA(g: Array[Array[Int]]){
-    val NN = 100000 // 要素数
-    val K = 20 // 2^(K-1) >= NN なのか？ダブリングの深さ
-    val ZERO = -1
-
-    val (depth, parent, _) = traceBfs(g)
-    parent(0) = 0
-
-    val anc = Array.ofDim[Int](K, NN)
-    REP(NN) { i =>
-      anc(0)(i) = parent(i)
-    }
-    REP(anc.length - 1, 1) { k =>
-      REP(NN) { i =>
-        anc(k)(i) = anc(k-1)(anc(k-1)(i))
-      }
-    }
-
-    def getParent(v: Int, d: Int): Int = {
-      def step(v0: Int, k: Int, d0: Int): Int = {
-        if (d0 == 0) v0
-        else if (d0 % 2 == 1) step(anc(k)(v0), k + 1, d0 / 2)
-        else step(v0, k + 1, d0 / 2)
-      }
-
-      step(v, 0, d)
-    }
-
-    /**
-      * lca(v, ZERO) = v
-      */
-    def lca(v: Int, u: Int): Int = {
-      def step(v0: Int, u0: Int, k: Int): Int = {
-        if (k == -1) {
-          anc(0)(v0) // １つ前の子を返したかったら(v0, u0)を返す
-        } else if (anc(k)(v0) == anc(k)(u0)) {
-          step(v0, u0, k - 1)
-        } else {
-          step(anc(k)(v0), anc(k)(u0), k - 1)
-        }
-      }
-
-      if (v == ZERO) u
-      else if (u == ZERO) v
-      else {
-        val d = min(depth(v), depth(u))
-        val v0 = getParent(v, depth(v) - d)
-        val u0 = getParent(u, depth(u) - d)
-        if (v0 == u0) v0 // この時点で同じだったらダブリングで調べる必要がない
-        else step(v0, u0, anc.length - 1)
       }
     }
   }
