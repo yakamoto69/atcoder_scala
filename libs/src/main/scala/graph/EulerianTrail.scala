@@ -39,17 +39,21 @@ object EulerianTrail {
       }
 
       var plus, minus = 0
+      var ok = true
       REP(n) { v =>
         // in - out
-        if (in(v) > g(v).length) {
+        if (in(v) == g(v).length + 1) {
           plus += 1
-        } else if (in(v) < g(v).length) {
+        } else if (in(v) + 1 == g(v).length) {
           minus += 1
-          s = v // 収支マイナスの点から始める
+          s += v // 収支マイナスの点から始める
+        } else {
+          //１こ以上ずれているとアウト
+          ok &&= in(v) == g(v).length
         }
       }
 
-      (s, plus == 0 && minus == 0 || plus == 1 && minus == 1)
+      (s, ok && (plus == 0 && minus == 0 || plus == 1 && minus == 1))
     } map { path =>
       // ちょうど逆さまになっているので、有向グラフの場合はreverseしないといけない
       REP((m + 1)/2) { i =>

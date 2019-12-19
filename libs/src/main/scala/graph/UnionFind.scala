@@ -30,15 +30,17 @@ class UnionFind(val n: Int) {
     rt
   }
 
-  def unite(x: Int, y: Int): Int = {
+  def unite(x: Int, y: Int): Boolean = {
     val x1 = find(x)
     val y1 = find(y)
-    if (x1 == y1) x1
+    if (x1 == y1) false
     else {
       if (rank(x1) < rank(y1))
         merge(x1, y1)
       else
         merge(y1, x1)
+
+      true
     }
   }
 
@@ -46,6 +48,15 @@ class UnionFind(val n: Int) {
     * xを解決する必要がないときは直にrankをみる
     */
   def cntNodes(x: Int): Int = rank(find(x))
+
+  def countDisjointSets: Int = {
+    var cnt = 0
+    REP(n) { i =>
+      // 同じかどうかだけを見るので、find使ってどの集合に属するかを解決する必要がない
+      if (par(i) == i) cnt += 1
+    }
+    cnt
+  }
 }
 
 object UnionFind {
@@ -58,15 +69,6 @@ object UnionFind {
         uf.unite(U(i), V(i))
         cnt -= 1
       }
-    }
-    cnt
-  }
-
-  def countDisjointSets(uf: UnionFind): Int = {
-    var cnt = 0
-    REP(uf.n) { i =>
-      // 同じかどうかだけを見るので、find使ってどの集合に属するかを解決する必要がない
-      if (uf.par(i) == i) cnt += 1
     }
     cnt
   }

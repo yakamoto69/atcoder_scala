@@ -9,19 +9,19 @@ object Main {
     out.flush()
   }
 
-  private[this] val oj = System.getenv("ATCODER_DEBUG") == null
-  @inline private final def DEBUG(f: => Unit): Unit = {
+  private[this] val oj = System.getenv("MY_DEBUG") == null
+  def DEBUG(f: => Unit): Unit = {
     if (!oj){ f }
   }
-  @inline private final def debug(as: Array[Boolean]): Unit = if (!oj){ debug(as.map(x => if(x) "1" else "0").mkString) }
-  @inline private final def debug(as: Array[Int]): Unit = if (!oj){ debug(as.mkString(" ")) }
-  @inline private final def debug(as: Array[Long]): Unit =if (!oj){ debug(as.mkString(" ")) }
-  @inline private final def debugDim(m: Array[Array[Long]]): Unit = if (!oj){
+  def debug(as: Array[Boolean]): Unit = if (!oj){ debug(as.map(x => if(x) "1" else "0").mkString) }
+  def debug(as: Array[Int]): Unit = if (!oj){ debug(as.mkString(" ")) }
+  def debug(as: Array[Long]): Unit =if (!oj){ debug(as.mkString(" ")) }
+  def debugDim(m: Array[Array[Int]]): Unit = if (!oj){
     REP(m.length) { i =>
       debug(m(i))
     }
   }
-  @inline private final def debugDimFlip(m: Array[Array[Long]]): Unit = if (!oj){
+  def debugDimFlip(m: Array[Array[Long]]): Unit = if (!oj){
     REP(m(0).length) { j =>
       REP(m.length) { i =>
         System.err.print(m(i)(j))
@@ -30,13 +30,10 @@ object Main {
       System.err.println()
     }
   }
-  @inline private final def debug(s: => String): Unit = DEBUG {
-    System.err.println(s)
+  def debug(s: => String): Unit = {
+    if (!oj){ System.err.println(s) }
   }
-  @inline private final def debugL(num: => Long): Unit = DEBUG {
-    System.err.println(num)
-  }
-  private def isDebug[A](debug: => A, online: => A): A = {
+  def isDebug[A](debug: => A, online: => A): A = {
     if (oj) online else debug
   }
 
@@ -44,7 +41,7 @@ object Main {
     private[this] val reader = new BufferedReader(new InputStreamReader(stream), 32768)
     private[this] var tokenizer: StringTokenizer = _
 
-    @inline private[this] final def next(): String = {
+    private[this] def next(): String = {
       while (tokenizer == null || !tokenizer.hasMoreTokens)
         tokenizer = new StringTokenizer(reader.readLine)
       tokenizer.nextToken
@@ -115,6 +112,11 @@ object Main {
 
 object Workspace {
   import Main._
+  import java.util.Arrays.sort
+
+  import scala.collection.mutable
+  import math.{abs, max, min}
+  import mutable.ArrayBuffer
 }
 
 class Main(out: java.io.PrintWriter, sc: Main.InputReader) {
@@ -131,7 +133,7 @@ class Main(out: java.io.PrintWriter, sc: Main.InputReader) {
   final private[this] val MOD = 1000000007
 
   def solve(): Unit = {
-    val n = ni()
-    out.println(n)
+    val N = ni()
+    out.println(N)
   }
 }

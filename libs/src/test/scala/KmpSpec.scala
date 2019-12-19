@@ -68,7 +68,7 @@ class KmpSpec extends FlatSpec with GeneratorDrivenPropertyChecks with Matchers 
       args foreach { case (matchedLen, nextChar) =>
         val s = word.substring(0, matchedLen) + nextChar
         System.err.println(s"$word $matchedLen $nextChar ${findLongestSuffix(s)}")
-        kmp.longestSuffix(matchedLen, nextChar) should be (findLongestSuffix(s))
+        kmp.longestPrefix(matchedLen, nextChar) should be (findLongestSuffix(s))
       }
     }
   }

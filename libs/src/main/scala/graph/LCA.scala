@@ -8,11 +8,14 @@ import math.min
   * @param g packで作ったグラフでおきかえること
   * @param K pow(2,K) >= N-1 なのか？ダブリングの深さ
   */
-class LCA(g: Array[Array[Int]], N: Int, K: Int, rt: Int = 0){
+class LCA(g: Array[Array[Int]], N: Int, K: Int){
   private[this] val ZERO = -1
 
-  private[this] val (depth, parent, _) = traceBfs(g, rt)
-  parent(rt) = rt // ルートを-1じゃなくてrtにする
+  private[this] val (depth, parent, _) = traceBfs(g)
+  // ルートを-1じゃなくてrtにする
+  REP(N) { i =>
+    if (depth(i) == 0) parent(i) = i
+  }
 
   private[this] val anc = Array.ofDim[Int](K, N)
   REP(N) { i =>

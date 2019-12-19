@@ -87,78 +87,41 @@ package object graph {
   /**
     * @return (depth, parent, queue)
     */
-  def traceBfs(g: Array[Array[Int]], rt: Int = 0): (Array[Int], Array[Int], Array[Int]) = {
+  def traceBfs(g: Array[Array[Int]], rt: Option[Int] = Some(0)): (Array[Int], Array[Int], Array[Int]) = {
     val n = g.length
     val INF = 1e9.toInt + 10
     val q, p = Array.ofDim[Int](n)
-    q(0) = rt
-    p(rt) = -1
     val d = Array.fill[Int](n)(INF)
-    d(rt) = 0
-    var cur = 0
-    var last = 1
-    while (cur < last) {
-      val v = q(cur)
-      REP(g(v).length) { i =>
-        val u = g(v)(i)
-        if (d(u) == INF) {
-          d(u) = d(v) + 1
-          p(u) = v
-          q(last) = u
-          last += 1
+    var cur, last = 0
+
+    def bfs(rt: Int) {
+      q(last) = rt
+      last += 1
+      p(rt) = -1
+      d(rt) = 0
+
+      while (cur < last) {
+        val v = q(cur)
+        REP(g(v).length) { i =>
+          val u = g(v)(i)
+          if (d(u) == INF) {
+            d(u) = d(v) + 1
+            p(u) = v
+            q(last) = u
+            last += 1
+          }
         }
+        cur += 1
       }
-      cur += 1
     }
+
+    rt.map(bfs).getOrElse {
+      REP(n) { v =>
+        if (d(v) == INF) bfs(v)
+      }
+    }
+
     (d, p, q)
-  }
-
-  /**
-    * @return (depth, parent, tour)
-    */
-  def traceDfs(g: Array[Array[Int]], rt: Int = 0): (Array[Int], Array[Int], Array[Int]) = {
-    val n = g.length
-    val stack = Array.ofDim[Int](n)
-    var s = 0
-    val ix = Array.ofDim[Int](n)
-    val tour = Array.ofDim[Int](n) // dfsの訪れる順番
-    var p = 0
-    val depth = Array.ofDim[Int](n)
-    val parent = Array.ofDim[Int](n)
-    parent(rt) = -1
-
-    tour(p) = rt
-    p += 1
-    stack(s) = rt
-    s += 1
-
-    while(s > 0) {
-      val v = stack(s-1)
-      val es = g(v)
-
-      if (ix(v) == 0) {
-        // dfsの開始部分
-        depth(v) = if (parent(v) == -1) 0 else depth(parent(v)) + 1
-        tour(p) = v
-        p += 1
-      }
-
-      if (ix(v) == es.length) {
-        // dfsの終了部分
-        s -= 1
-      }
-      else {
-        val u = es(ix(v))
-        if (u != parent(v)) {
-          parent(u) = v
-          stack(s) = u
-          s += 1
-        }
-        ix(v) += 1
-      }
-    }
-
-    (depth, parent, tour)
   }
 
   def isBipartite(g: Array[Array[Int]]): Boolean = {

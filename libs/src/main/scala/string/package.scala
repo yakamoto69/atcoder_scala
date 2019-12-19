@@ -10,19 +10,19 @@ package object string {
     val kmp: Array[Int] = Array.ofDim[Int](word.length + 1)
     2 to word.length foreach { i =>
       // kmp(i-1)以下しか参照されないからOK
-      kmp(i) = longestSuffix(kmp(i - 1), word(i - 1))
+      kmp(i) = longestPrefix(kmp(i - 1), word(i - 1))
     }
 
     def findFirst(text: String): Int = {
       var j = 0
       REP(text.length) { i =>
-        j = longestSuffix(j, text(i))
+        j = longestPrefix(j, text(i))
         if (j == word.length) return i - word.length + 1
       }
       -1
     }
 
-    def longestSuffix(matched: Int, c: Char): Int = {
+    def longestPrefix(matched: Int, c: Char): Int = {
       var j = matched
       var continues = true
       while(continues) {

@@ -1,4 +1,7 @@
 import mat._
+import lang._
+import math.max
+
 package object seq {
   /**
     * (fn+1) = (1 1) (fn  )
@@ -22,5 +25,29 @@ package object seq {
       )
       val res = power(a, n - 1, mod)
       res(0)(0).toInt
+  }
+
+
+  def LIS(A: Array[Int]): Int = {
+    def lowerBound(a: Array[Int], lst: Int, x: Int): Int = {
+      def step(l: Int, h: Int): Int = {
+        if (h - l == 1) h
+        else {
+          val mid = (l + h) / 2
+          if (a(mid) >= x) step(l, mid)
+          else step(mid, h)
+        }
+      }
+
+      step(-1, lst)
+    }
+    val lis = Array.ofDim[Int](A.length)
+    var p = 0
+    REP(A.length) { i =>
+      val ix = lowerBound(lis, p, A(i))
+      lis(ix) = A(i)
+      p = max(ix + 1, p)
+    }
+    p
   }
 }
