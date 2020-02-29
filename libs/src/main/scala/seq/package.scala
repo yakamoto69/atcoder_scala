@@ -1,6 +1,7 @@
 import mat._
 import lang._
 import math.max
+import rmq.BIT
 
 package object seq {
   /**
@@ -49,5 +50,15 @@ package object seq {
       p = max(ix + 1, p)
     }
     p
+  }
+
+  def countTranpositions(p: Array[Int]) = {
+    val bit = new BIT(p.length)
+    var cnt = 0L
+    REP_r(p.length) { i =>
+      cnt += bit.sum(p(i))
+      bit.add(p(i), 1)
+    }
+    cnt
   }
 }

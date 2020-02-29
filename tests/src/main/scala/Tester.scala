@@ -7,7 +7,7 @@ object Tester {
 
   case class TestCase(name: String, in: String, out: String)
 
-  def readTestCases(name: String): Seq[TestCase] = {
+  def readTestCases(name: String): ArrayBuffer[TestCase] = {
     val tests = ArrayBuffer[TestCase]()
 
     val file = getClass.getClassLoader.getResource(s"$name.txt")

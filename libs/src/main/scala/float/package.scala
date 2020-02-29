@@ -4,8 +4,8 @@ package object float {
   val EPS = 1e-9
   def lt(x: Double, y: Double) = x < y - EPS
   def le(x: Double, y: Double) = x < y + EPS
-  def gt(x: Double, y: Double) = x > y - EPS
-  def ge(x: Double, y: Double) = x > y + EPS
+  def gt(x: Double, y: Double) = x > y + EPS
+  def ge(x: Double, y: Double) = x > y - EPS
   def eq(x: Double, y: Double) = abs(x - y) < EPS
 
   def binSearch(l: Double, h: Double)(f: Double => Boolean): Double = {

@@ -57,7 +57,7 @@ object GraphDfs {
 
     REP(n) { v =>
       if (!dfs1.getUsed(v)) {
-        dfs1(v, _ => Unit, v => {
+        dfs1(v, _ => (), v => {
           vs(p) = v
           p += 1
         })
@@ -69,7 +69,7 @@ object GraphDfs {
     REP_r(n) { i =>
       val v = vs(i)
       if (!dfs2.getUsed(v)) {
-        dfs2(v, _ => Unit, v => {
+        dfs2(v, _ => (), v => {
           comp(v) = k
         })
         k += 1
